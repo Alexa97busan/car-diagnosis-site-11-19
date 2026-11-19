@@ -576,23 +576,12 @@
        · 그라데이션: 헤더·섹션 바·배지·쿠폰 등 linear-gradient만 사용
        ========================================================= */
     #report-stage {
-      position: relative;
-      isolation: isolate;
       display: inline-block;
       margin: 0 auto;
       padding: 28px 40px 44px 28px;
       background: linear-gradient(160deg, #EDE6FD 0%, #E2E6EE 55%, #F3F5F8 100%);
     }
-    /* 용지 뒤 단색 레이어 2장 (paper 박스와 같은 크기, 오프셋으로 두께감) */
-    #report-stage::before,
-    #report-stage::after {
-      content: ''; position: absolute; z-index: -1;
-      top: 28px; left: 28px; right: 40px; bottom: 44px;
-    }
-    #report-stage::before { background: #4D2689; transform: translate(12px, 12px); }
-    #report-stage::after  { background: #D4D9E2; transform: translate(6px, 6px); }
     #report-paper {
-      position: relative; z-index: 1;
       background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 45%, #F4F6FA 100%);
       border: 1px solid #C8CED8;
       border-top: 8px solid #0B0E14;
@@ -618,12 +607,10 @@
     #report-paper .rp-roi-badge {
       background: linear-gradient(135deg, #0B0E14 0%, #4D2689 100%);
       color: #FFDD00; font-weight: 800;
-      border-right: 4px solid #FFDD00; border-bottom: 4px solid #FFDD00;
     }
     #report-paper .rp-split-item {
       background: linear-gradient(180deg, #FFFFFF 0%, #F4F6FA 100%);
       border-color: #C8CED8; color: #0B0E14;
-      border-right: 3px solid #D4D9E2; border-bottom: 3px solid #D4D9E2;
     }
     #report-paper .rp-summary-text { color: #0B0E14; line-height: 1.75; font-weight: 500; }
 
@@ -631,11 +618,10 @@
     #report-paper .rp-sec-title {
       background: linear-gradient(90deg, #0B0E14 0%, #2B1A4F 100%);
       color: #FFFFFF; border-left: 6px solid #7E3AF2;
-      border-bottom: 3px solid #7E3AF2;
     }
     #report-paper .rp-sec-body {
       border-color: #C8CED8;
-      border-right: 4px solid #EDE6FD; border-bottom: 4px solid #EDE6FD;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F6F7FB 100%);
     }
     #report-paper .rp-lbl { color: #4B5563; font-weight: 600; }
     #report-paper .rp-val { color: #0B0E14; font-weight: 700; }
@@ -644,7 +630,6 @@
     #report-paper .rp-photo-card {
       border-color: #C8CED8;
       background: linear-gradient(180deg, #F8F9FB 0%, #E9EDF3 100%);
-      border-bottom: 4px solid #D4D9E2;
     }
     #report-paper .rp-photo-cap {
       color: #0B0E14; font-weight: 700;
@@ -655,13 +640,11 @@
     #report-paper .rp-care-coupon {
       border: 2px dashed #7E3AF2;
       background: linear-gradient(135deg, #F5F0FF 0%, #EDE6FD 100%);
-      border-bottom: 5px solid #4D2689;
     }
     #report-paper .rp-coupon-left { color: #4D2689; font-weight: 700; }
     #report-paper .rp-sticker-tag {
       background: linear-gradient(135deg, #7E3AF2 0%, #4D2689 100%);
       color: #FFFFFF; font-weight: 700;
-      border-bottom: 3px solid #0B0E14;
     }
 
     /* 푸터 · 서명 */
@@ -672,6 +655,29 @@
     #report-paper .rp-disclaimer { color: #4B5563; }
     #report-paper .rp-sign-info { color: #0B0E14; font-weight: 700; }
     #report-paper .rp-sign-sub { color: #1B1F27; font-weight: 600; }
+
+    /* =========================================================
+       HOVER — 입력 화면 그림자 반응 (마우스 기기에서만, blur 그림자 사용)
+       · 카드: 떠오르며 그림자가 퍼짐 / 칩·버튼: 살짝 떠오름
+       · 누를 때는 제자리로 눌리는 피드백
+       ========================================================= */
+    .btn-save { background: linear-gradient(135deg, #7E3AF2 0%, #4D2689 100%); }
+    .btn-share { background: linear-gradient(180deg, #FFE54D 0%, #FFDD00 100%); }
+    .btn-preview { background: linear-gradient(180deg, #F3F5F8 0%, #E0E4EB 100%); }
+    @media (hover: hover) {
+      .card { transition: box-shadow 260ms ease-out, transform 260ms ease-out, border-color 260ms ease-out; }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: #D4C4F5;
+        box-shadow: 0 22px 30px -22px rgba(11, 14, 20, 0.45), 0 8px 14px -8px rgba(77, 38, 137, 0.25);
+      }
+      .seg { transition: box-shadow 260ms ease-out; }
+      .seg:hover { box-shadow: inset 0 1px 2px rgba(15,23,42,0.08), 0 8px 16px -10px rgba(77,38,137,0.45); }
+      .chip:hover { transform: translateY(-1px); box-shadow: 0 8px 14px -8px rgba(126,58,242,0.6); }
+      .btn { transition: transform 160ms ease-out, box-shadow 260ms ease-out, background 260ms ease-out; }
+      .btn:hover { transform: translateY(-2px); }
+      .btn:active { transform: translateY(0) scale(0.98); }
+    }
 
     /* =========================================================
        WIDE — 1100px 이상: 섹션 카드를 16:9 가로 격자로 배치
