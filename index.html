@@ -568,6 +568,110 @@
     #report-paper .rp-sign-info { color: #0B0E14; }
     #report-paper .rp-sign-sub { color: #1B1F27; }
     #report-paper .rp-sign-img-wrap { border-bottom-color: #9CA3AF; }
+
+    /* =========================================================
+       v4 DEPTH — 미리보기 · PNG · 공유 공통
+       · 깊이: 용지 뒤에 단색 오프셋 레이어(blur 없음 → 캡처에서도 확실히 보임)
+       · 가독성: 본문 대비 강화(진한 글자, 굵은 값), 줄간격 확대
+       · 그라데이션: 헤더·섹션 바·배지·쿠폰 등 linear-gradient만 사용
+       ========================================================= */
+    #report-stage {
+      position: relative;
+      isolation: isolate;
+      display: inline-block;
+      margin: 0 auto;
+      padding: 28px 40px 44px 28px;
+      background: linear-gradient(160deg, #EDE6FD 0%, #E2E6EE 55%, #F3F5F8 100%);
+    }
+    /* 용지 뒤 단색 레이어 2장 (paper 박스와 같은 크기, 오프셋으로 두께감) */
+    #report-stage::before,
+    #report-stage::after {
+      content: ''; position: absolute; z-index: -1;
+      top: 28px; left: 28px; right: 40px; bottom: 44px;
+    }
+    #report-stage::before { background: #4D2689; transform: translate(12px, 12px); }
+    #report-stage::after  { background: #D4D9E2; transform: translate(6px, 6px); }
+    #report-paper {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 45%, #F4F6FA 100%);
+      border: 1px solid #C8CED8;
+      border-top: 8px solid #0B0E14;
+    }
+
+    /* 상단 띠 · 헤더 */
+    #report-paper .rp-pledge-bar {
+      background: linear-gradient(90deg, #0B0E14 0%, #2B1A4F 60%, #4D2689 100%);
+      color: #FFFFFF;
+    }
+    #report-paper .rp-header { border-bottom: 3px solid #0B0E14; }
+    #report-paper .rp-title { color: #0B0E14; font-weight: 800; }
+    #report-paper .rp-doc-meta { color: #4B5563; font-weight: 600; }
+
+    /* 정보 표 */
+    #report-paper .rp-info-table th {
+      background: linear-gradient(180deg, #F8F9FB 0%, #E9EDF3 100%);
+      color: #0B0E14; font-weight: 700;
+    }
+    #report-paper .rp-info-table td { color: #0B0E14; font-weight: 600; }
+
+    /* 판정 · ROI — 검정 그라데이션 + 노란 단색 그림자 레이어 */
+    #report-paper .rp-roi-badge {
+      background: linear-gradient(135deg, #0B0E14 0%, #4D2689 100%);
+      color: #FFDD00; font-weight: 800;
+      border-right: 4px solid #FFDD00; border-bottom: 4px solid #FFDD00;
+    }
+    #report-paper .rp-split-item {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F4F6FA 100%);
+      border-color: #C8CED8; color: #0B0E14;
+      border-right: 3px solid #D4D9E2; border-bottom: 3px solid #D4D9E2;
+    }
+    #report-paper .rp-summary-text { color: #0B0E14; line-height: 1.75; font-weight: 500; }
+
+    /* 섹션 — 검정→보라 그라데이션 바 + 깊이 레이어 */
+    #report-paper .rp-sec-title {
+      background: linear-gradient(90deg, #0B0E14 0%, #2B1A4F 100%);
+      color: #FFFFFF; border-left: 6px solid #7E3AF2;
+      border-bottom: 3px solid #7E3AF2;
+    }
+    #report-paper .rp-sec-body {
+      border-color: #C8CED8;
+      border-right: 4px solid #EDE6FD; border-bottom: 4px solid #EDE6FD;
+    }
+    #report-paper .rp-lbl { color: #4B5563; font-weight: 600; }
+    #report-paper .rp-val { color: #0B0E14; font-weight: 700; }
+
+    /* 사진 카드 */
+    #report-paper .rp-photo-card {
+      border-color: #C8CED8;
+      background: linear-gradient(180deg, #F8F9FB 0%, #E9EDF3 100%);
+      border-bottom: 4px solid #D4D9E2;
+    }
+    #report-paper .rp-photo-cap {
+      color: #0B0E14; font-weight: 700;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F4F6FA 100%);
+    }
+
+    /* 쿠폰 · 씰 */
+    #report-paper .rp-care-coupon {
+      border: 2px dashed #7E3AF2;
+      background: linear-gradient(135deg, #F5F0FF 0%, #EDE6FD 100%);
+      border-bottom: 5px solid #4D2689;
+    }
+    #report-paper .rp-coupon-left { color: #4D2689; font-weight: 700; }
+    #report-paper .rp-sticker-tag {
+      background: linear-gradient(135deg, #7E3AF2 0%, #4D2689 100%);
+      color: #FFFFFF; font-weight: 700;
+      border-bottom: 3px solid #0B0E14;
+    }
+
+    /* 푸터 · 서명 */
+    #report-paper .rp-footer {
+      border-top: 3px solid #0B0E14;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F4F6FA 100%);
+    }
+    #report-paper .rp-disclaimer { color: #4B5563; }
+    #report-paper .rp-sign-info { color: #0B0E14; font-weight: 700; }
+    #report-paper .rp-sign-sub { color: #1B1F27; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -898,6 +1002,7 @@
       <button class="modal-close" onclick="closePreview()">닫기 ✕</button>
     </div>
     <div class="preview-wrapper">
+      <div id="report-stage">
       <div id="report-paper">
         <div>
           <div class="rp-pledge-bar">
@@ -1038,6 +1143,7 @@
             <div class="rp-stamp">정밀진단<br>확인필</div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -1565,7 +1671,8 @@
 
       try {
         const paper = document.getElementById('report-paper');
-        const canvas = await html2canvas(paper, {
+        const stage = document.getElementById('report-stage');
+        const canvas = await html2canvas(stage, {
           scale: 2,
           useCORS: true,
           backgroundColor: '#ffffff',
