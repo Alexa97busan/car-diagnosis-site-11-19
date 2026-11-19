@@ -84,7 +84,7 @@
     textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
     /* 자동 높이 칸: 내용이 길면 줄바꿈되며 칸이 아래로 늘어남 */
     textarea.autogrow {
-      resize: none; overflow: hidden; min-height: 46px; height: auto;
+      resize: none; overflow: hidden; min-height: 84px; height: auto;
       padding: 11px 12px; line-height: 1.45; word-break: keep-all;
     }
     input[type="hidden"] { display: none; }
@@ -1010,7 +1010,7 @@
       <div class="grid-2">
         <div class="field">
           <label for="in-warranty-ok">성능보증보험 처리 가능 (30일/2천km)</label>
-          <textarea id="in-warranty-ok" class="persist autogrow" rows="1" placeholder="예: 오일팬 미세누유"></textarea>
+          <textarea id="in-warranty-ok" class="persist autogrow" rows="2" placeholder="예: 오일팬 미세누유"></textarea>
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-warranty-ok', '해당 없음 (누유·기능고장 무)')">해당 없음</span>
             <span class="chip" onclick="setVal('in-warranty-ok', '오일팬 미세누유 (출고 후 보증보험 처리대상)')">오일팬 누유</span>
@@ -1018,7 +1018,7 @@
         </div>
         <div class="field">
           <label for="in-nego-target">보증 제외 · 감가 협상 대상</label>
-          <textarea id="in-nego-target" class="persist autogrow" rows="1" placeholder="예: 앞타이어+브레이크액 약 35만 원"></textarea>
+          <textarea id="in-nego-target" class="persist autogrow" rows="2" placeholder="예: 앞타이어+브레이크액 약 35만 원"></textarea>
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-nego-target', '0원 (정상가 매입 가능)')">감가 없음</span>
             <span class="chip warn" onclick="setVal('in-nego-target', '소모품 교체비 약 35만 원 현장 감가 권장')">35만 감가</span>
