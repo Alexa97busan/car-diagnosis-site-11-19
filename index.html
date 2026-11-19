@@ -656,6 +656,43 @@
     #report-paper .rp-sign-info { color: #0B0E14; font-weight: 700; }
     #report-paper .rp-sign-sub { color: #1B1F27; font-weight: 600; }
 
+    /* =========================================================
+       MULTI-PAGE — 내용이 한 장(A4 794×1123)을 넘으면 자동으로 2·3장 이상 분할
+       · #report-paper 는 페이지 묶음, 각 장은 .rp-page-wrap > .rp-page
+       · 장 단위 캡처 → 미리보기 세로 나열 / PNG 장별 저장 / 공유 시 여러 장 함께 전달
+       ========================================================= */
+    #report-stage {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 28px; padding: 0; background: none; margin: 0 auto;
+    }
+    #report-paper {
+      width: auto; min-height: 0; padding: 0; box-shadow: none; background: none; border: none;
+      display: flex; flex-direction: column; align-items: center; gap: 28px; justify-content: flex-start;
+    }
+    .rp-page-wrap {
+      padding: 28px 40px 44px 28px;
+      background: linear-gradient(160deg, #EDE6FD 0%, #E2E6EE 55%, #F3F5F8 100%);
+    }
+    .rp-page {
+      position: relative; width: 794px; height: 1123px; box-sizing: border-box;
+      padding: 24px 30px 48px; overflow: hidden;
+      display: flex; flex-direction: column;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 45%, #F4F6FA 100%);
+      border: 1px solid #C8CED8; border-top: 8px solid #0B0E14; color: #1B1F27;
+    }
+    .rp-page > * { flex-shrink: 0; }
+    .rp-page > .rp-footer { margin-top: auto; }
+    .rp-cont-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 11px; font-weight: 800; color: #4D2689;
+      border-bottom: 2px solid #0B0E14; padding-bottom: 6px; margin-bottom: 14px;
+    }
+    .rp-cont-head .rp-cont-plate { color: #0B0E14; }
+    .rp-pageno {
+      position: absolute; right: 16px; bottom: 14px;
+      font-size: 10px; font-weight: 700; color: #6B7280;
+    }
+
     /* 자유 메모 블록 (입력 메모가 있을 때만 표시) */
     #report-paper .rp-memo {
       margin-top: 10px; padding: 9px 12px;
@@ -1721,9 +1758,82 @@
       }
     }
 
+    // A4 한 장 높이(px). 넘치면 다음 장으로 넘김
+    const PAGE_H = 1123;
+
+    // 리포트 블록을 장 단위로 나눠 배치 (보이는 상태에서 호출해야 정확히 측정됨)
+    function paginateReport() {
+      const host = document.getElementById('report-paper');
+      if (!host._units) {
+        const inner = host.firstElementChild;
+        const footer = host.querySelector(':scope > .rp-footer');
+        host._footer = footer;
+        host._units = [...inner.children].filter(el => el !== footer);
+      }
+      const plate = (document.getElementById('out-plate').textContent || '-');
+
+      // 메모가 길면 여러 블록(12줄씩)으로 나눠 다음 장으로 넘김 — 원본 원고는 입력칸(in-memo)이 기준
+      const memoEl = document.getElementById('out-memo-wrap');
+      const memoSrc = (document.getElementById('in-memo').value || '').trim();
+      const units = [];
+      host._units.forEach(u => {
+        if (u !== memoEl || !memoSrc) { units.push(u); return; }
+        const lines = memoSrc.split('\n');
+        for (let i = 0, k = 0; i < lines.length; i += 12, k++) {
+          const el = k === 0 ? memoEl : memoEl.cloneNode(true);
+          if (k > 0) { el.removeAttribute('id'); el.querySelectorAll('[id]').forEach(n => n.removeAttribute('id')); }
+          el.hidden = false;
+          el.querySelector('.rp-memo-title').textContent = k === 0 ? '메모' : '메모 (계속)';
+          el.querySelector('.rp-memo-body').textContent = lines.slice(i, i + 12).join('\n');
+          units.push(el);
+        }
+      });
+      host.replaceChildren();
+
+      const pages = [];
+      const newPage = () => {
+        const wrap = document.createElement('div');
+        wrap.className = 'rp-page-wrap';
+        const page = document.createElement('div');
+        page.className = 'rp-page';
+        wrap.appendChild(page);
+        host.appendChild(wrap);
+        if (pages.length > 0) {
+          const head = document.createElement('div');
+          head.className = 'rp-cont-head';
+          head.innerHTML = '<span>평가사 정승원의 바른중고차동행 · 정밀진단 리포트 (계속)</span><span class="rp-cont-plate"></span>';
+          head.querySelector('.rp-cont-plate').textContent = plate;
+          page.appendChild(head);
+        }
+        pages.push(page);
+        return page;
+      };
+
+      let page = newPage();
+      const place = (el) => {
+        page.appendChild(el);
+        // 장 높이(패딩 포함)를 넘으면 다음 장으로 이동 (장에 내용이 하나도 없으면 그대로 둠)
+        if (page.scrollHeight > PAGE_H && page.querySelector(':scope > :not(.rp-cont-head)') !== el) {
+          page.removeChild(el);
+          page = newPage();
+          page.appendChild(el);
+        }
+      };
+      units.forEach(place);
+      place(host._footer);
+
+      pages.forEach((p, i) => {
+        const no = document.createElement('div');
+        no.className = 'rp-pageno';
+        no.textContent = `${i + 1} / ${pages.length}`;
+        p.appendChild(no);
+      });
+    }
+
     function openPreview() {
       syncReportData();
       document.getElementById('preview-modal').classList.add('active');
+      paginateReport();
     }
 
     function closePreview() {
@@ -1742,38 +1852,42 @@
       await new Promise(r => setTimeout(r, 150));
 
       try {
-        const paper = document.getElementById('report-paper');
-        const stage = document.getElementById('report-stage');
-        const canvas = await html2canvas(stage, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          windowWidth: 900
-        });
+        paginateReport();
+        const wraps = [...document.querySelectorAll('#report-paper .rp-page-wrap')];
+        const canvases = [];
+        for (const wrap of wraps) {
+          canvases.push(await html2canvas(wrap, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            windowWidth: 900
+          }));
+        }
 
         const plate = (document.getElementById('in-plate').value || '차량').replace(/\s+/g, '');
         const dateStr = document.getElementById('in-date').value || 'report';
-        const fileName = `정밀진단리포트_${plate}_${dateStr}.png`;
+        const base = `정밀진단리포트_${plate}_${dateStr}`;
+        const total = canvases.length;
+        const names = canvases.map((_, i) => total > 1 ? `${base}_${i + 1}of${total}.png` : `${base}.png`);
 
         if (mode === 'share' && navigator.share && navigator.canShare) {
-          canvas.toBlob(async (blob) => {
-            const file = new File([blob], fileName, { type: 'image/png' });
-            if (navigator.canShare({ files: [file] })) {
-              try {
-                await navigator.share({
-                  title: `${plate} 차량 정밀진단 리포트`,
-                  text: 'AM, 5H34M 차량 정밀진단 및 구매동행 리포트입니다.',
-                  files: [file]
-                });
-              } catch (err) {
-                if (err.name !== 'AbortError') downloadCanvas(canvas, fileName);
-              }
-            } else {
-              downloadCanvas(canvas, fileName);
+          const blobs = await Promise.all(canvases.map(c => new Promise(res => c.toBlob(res, 'image/png'))));
+          const files = blobs.map((b, i) => new File([b], names[i], { type: 'image/png' }));
+          if (navigator.canShare({ files })) {
+            try {
+              await navigator.share({
+                title: `${plate} 차량 정밀진단 리포트`,
+                text: 'AM, 5H34M 차량 정밀진단 및 구매동행 리포트입니다.',
+                files
+              });
+            } catch (err) {
+              if (err.name !== 'AbortError') await downloadAll(canvases, names);
             }
-          }, 'image/png');
+          } else {
+            await downloadAll(canvases, names);
+          }
         } else {
-          downloadCanvas(canvas, fileName);
+          await downloadAll(canvases, names);
         }
       } catch (e) {
         alert('이미지 생성 중 오류가 발생했습니다: ' + e.message);
@@ -1788,6 +1902,14 @@
       link.download = fileName;
       link.href = canvas.toDataURL('image/png');
       link.click();
+    }
+
+    // 여러 장일 때 브라우저가 연속 다운로드를 막지 않도록 간격을 둠
+    async function downloadAll(canvases, names) {
+      for (let i = 0; i < canvases.length; i++) {
+        downloadCanvas(canvases[i], names[i]);
+        if (i < canvases.length - 1) await new Promise(r => setTimeout(r, 400));
+      }
     }
   </script>
 </body>
