@@ -326,6 +326,118 @@
       align-items: center; justify-content: center; flex-direction: column; gap: 10px;
     }
     .loading.active { display: flex; }
+    /* =========================================================
+       v4 UI LAYER SYSTEM (입력 화면 전용)
+       - 0px 직각, 상단 중앙 광원 기준 그림자(아래로만), 보라 1px 와이어 글로우
+       - 리포트 용지(#report-paper, .rp-*)와 JS 동작 셀렉터는 건드리지 않음
+       ========================================================= */
+    :root {
+      --violet: #7E3AF2;
+      --violet-soft: rgba(126, 58, 242, 0.45);
+      --sun-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.06),
+        0 10px 16px -10px rgba(15, 23, 42, 0.22),
+        0 24px 40px -24px rgba(15, 23, 42, 0.26);
+      --glow-violet:
+        0 0 0 1px rgba(126, 58, 242, 0.55),
+        0 0 14px rgba(126, 58, 242, 0.34);
+    }
+
+    /* L0 · 배경 — 상단 중앙 광원 그라데이션 */
+    body {
+      background:
+        radial-gradient(circle at 50% -10%, #ffffff 0%, rgba(255,255,255,0.6) 22%, transparent 60%),
+        var(--bg);
+      background-attachment: fixed;
+    }
+
+    /* L3 · 상단 헤더 — 보라 하단 와이어 + 글로우 */
+    .app-header {
+      border-bottom: 2px solid var(--violet);
+      box-shadow: 0 14px 22px -12px rgba(15, 23, 42, 0.45), 0 4px 14px -2px rgba(126, 58, 242, 0.45);
+    }
+
+    /* L2 · 입력 카드 판 (직각 + 그림자 레이어) */
+    .card {
+      border-radius: 0;
+      border: 1px solid #d5dde7;
+      border-top: 2px solid #ffffff;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: var(--sun-shadow), inset 0 1px 0 #ffffff;
+      transition: box-shadow 0.35s ease, border-color 0.3s ease;
+    }
+    .card:focus-within {
+      border-color: var(--violet-soft);
+      box-shadow: var(--sun-shadow), var(--glow-violet), inset 0 1px 0 #ffffff;
+    }
+    .card-title {
+      border-bottom: 1px solid var(--violet-soft);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    /* L4 · 입력칸 — 직각, 포커스 시 보라 글로우 */
+    input[type="text"], input[type="date"], select, textarea {
+      border-radius: 0;
+      background: #ffffff;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+      transition: border-color 0.2s ease, box-shadow 0.25s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--violet);
+      box-shadow: var(--glow-violet);
+    }
+
+    /* 세그먼트 — 직각 트랙, 움직이는 인디케이터는 레이어로 띄움 */
+    .seg { border-radius: 0; background: #e9edf3; box-shadow: inset 0 1px 2px rgba(15,23,42,0.08); }
+    .seg::before {
+      border-radius: 0;
+      background: linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(126, 58, 242, 0.35);
+    }
+    .seg button { border-radius: 0; }
+    .seg button.on { text-shadow: 0 0 10px rgba(126, 58, 242, 0.25); }
+
+    /* 칩 — 직각 태그 + 호버 글로우 */
+    .chip {
+      border-radius: 0;
+      box-shadow: 0 2px 4px -2px rgba(15, 23, 42, 0.25);
+      transition: background-color 120ms ease-out, color 120ms ease-out, transform 120ms ease-out, box-shadow 0.25s ease;
+    }
+    .chip:hover { box-shadow: var(--glow-violet); }
+    .chip.warn:hover { box-shadow: 0 0 0 1px rgba(180,83,9,0.5), 0 0 14px rgba(255,221,0,0.5); }
+
+    /* 진행바 — 직각 + 보라 발광 */
+    .progress { border-radius: 0; background: #dfe5ee; box-shadow: inset 0 1px 2px rgba(15,23,42,0.12); }
+    .progress-bar { border-radius: 0; box-shadow: 0 0 10px rgba(126, 58, 242, 0.55); }
+
+    /* 버튼 — 직각 + 그림자 레이어 + 호버 글로우 */
+    .btn-reset, .btn-clear-sign, .link-btn, .modal-close {
+      border-radius: 0;
+      box-shadow: 0 2px 4px -1px rgba(15,23,42,0.25);
+      transition: box-shadow 0.25s ease, background-color 0.2s ease;
+    }
+    .btn-reset:hover, .btn-clear-sign:hover, .link-btn:hover { box-shadow: var(--glow-violet); }
+    .btn {
+      border-radius: 0;
+      box-shadow: 0 10px 16px -10px rgba(15,23,42,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+      transition: transform 120ms ease-out, box-shadow 0.25s ease;
+    }
+    .btn:active { transform: translateY(1px); box-shadow: 0 4px 8px -6px rgba(15,23,42,0.45); }
+    .btn-save:hover { box-shadow: 0 10px 16px -10px rgba(15,23,42,0.45), 0 0 16px rgba(37,99,235,0.55); }
+    .btn-share:hover { box-shadow: 0 10px 16px -10px rgba(15,23,42,0.45), 0 0 16px rgba(16,185,129,0.55); }
+
+    /* L5 · 하단 고정 액션바 — 상단 방향 그림자 */
+    .bottom-bar {
+      border-top: 2px solid var(--violet-soft);
+      box-shadow: 0 -14px 22px -14px rgba(15,23,42,0.35), 0 -4px 14px -4px rgba(126,58,242,0.3);
+    }
+
+    /* 단계 라벨 */
+    .step-label { letter-spacing: 0.6px; }
+
+    /* 모달 — 최상위 레이어 */
+    .modal-close { border: 1px solid var(--violet-soft); }
   </style>
 </head>
 <body>
