@@ -9,6 +9,9 @@
     :root {
       --primary: #0f172a;
       --accent: #2563eb;
+      --ok: #16a34a;
+      --warn: #b45309;
+      --bad: #b91c1c;
       --bg: #f1f5f9;
       --card: #ffffff;
       --border: #cbd5e1;
@@ -16,7 +19,7 @@
       --muted: #64748b;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 92px; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 96px; }
 
     /* 상단 네비게이션 */
     .app-header {
@@ -25,48 +28,109 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     .header-left { display: flex; flex-direction: column; gap: 2px; }
-    .app-header h1 { margin: 0; font-size: 15.5px; font-weight: 700; letter-spacing: -0.3px; }
-    .save-status { font-size: 11px; color: #34d399; font-weight: 600; }
+    .app-header h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .save-status { font-size: 12px; color: #34d399; font-weight: 600; }
     .btn-reset {
       background: #334155; color: #f8fafc; border: 1px solid #475569;
-      padding: 6px 11px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+      padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
     }
     .btn-reset:active { background: #dc2626; border-color: #dc2626; }
 
-    /* 입력 폼 컨테이너 */
+    /* 진행률 */
     .form-container { max-width: 640px; margin: 12px auto; padding: 0 12px; }
+    .progress { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0; background: var(--accent); transition: width 240ms ease-out; }
+    .progress-text { font-size: 12px; color: var(--muted); font-weight: 600; margin: 6px 2px 0; }
+
+    /* 단계 구분 */
+    .step-label {
+      font-size: 12px; font-weight: 800; color: #475569; letter-spacing: 0.4px;
+      margin: 18px 2px 8px;
+    }
+    .step-label:first-of-type { margin-top: 12px; }
+
+    /* 카드 */
     .card {
       background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;
     }
     .card-title {
-      font-size: 14px; font-weight: 700; color: var(--primary); margin: 0 0 12px 0;
-      padding-bottom: 8px; border-bottom: 2px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;
+      font-size: 16px; font-weight: 700; color: var(--primary); margin: 0 0 14px 0;
+      padding-bottom: 10px; border-bottom: 2px solid #f1f5f9;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .field { margin-bottom: 11px; }
+    .check {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--ok); color: #fff;
+      font-size: 13px; display: inline-flex; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(0.8);
+      transition: opacity 150ms ease-out, transform 150ms ease-out;
+    }
+    .card.done .check { opacity: 1; transform: scale(1); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .grid-photo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    @media (max-width: 520px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 14px; }
+    }
+    .field { margin-bottom: 14px; }
     .field:last-child { margin-bottom: 0; }
-    label { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
     input, select, textarea {
-      width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px;
-      font-size: 14px; color: var(--text); background: #fff; transition: border-color 0.15s;
+      width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 16px; color: var(--text); background: #fff; transition: border-color 0.15s;
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 58px; line-height: 1.4; }
+    textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+    input[type="hidden"] { display: none; }
 
-    /* 원터치 상용구 칩 */
-    .preset-group { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    /* 세그먼트 (정해진 상태 선택) */
+    .seg {
+      position: relative; display: grid; grid-template-columns: repeat(var(--n, 3), 1fr);
+      background: #f1f5f9; border-radius: 10px; padding: 3px;
+    }
+    .seg::before {
+      content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px;
+      width: calc((100% - 6px) / var(--n, 3)); border-radius: 8px; background: #fff;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
+      transform: translateX(calc(var(--i, 0) * 100%));
+      transition: transform 180ms ease-out, opacity 150ms ease-out;
+    }
+    .seg.unset::before { opacity: 0; }
+    .seg button {
+      position: relative; z-index: 1; border: 0; background: none; border-radius: 8px;
+      min-height: 42px; padding: 8px 4px; font-size: 14px; font-weight: 600; color: #475569;
+      cursor: pointer; transition: color 150ms ease-out, transform 120ms ease-out;
+    }
+    .seg button:active { transform: scale(0.97); }
+    .seg button.on { color: var(--primary); }
+    .seg button.on.tone-warn { color: var(--warn); }
+    .seg button.on.tone-bad { color: var(--bad); }
+
+    /* 칩 (빠른 선택) */
+    .preset-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .chip {
       background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
-      border-radius: 6px; padding: 4px 8px; font-size: 11.5px; font-weight: 600;
-      cursor: pointer; transition: all 0.12s; user-select: none;
+      border-radius: 7px; padding: 6px 10px; font-size: 12.5px; font-weight: 600;
+      min-height: 32px; display: inline-flex; align-items: center;
+      cursor: pointer; transition: background-color 120ms ease-out, color 120ms ease-out, transform 120ms ease-out; user-select: none;
     }
     .chip:active { background: #2563eb; color: #fff; transform: scale(0.97); }
     .chip.warn { background: #fffbeb; color: #b45309; border-color: #fde68a; }
     .chip.warn:active { background: #d97706; color: #fff; }
     .chip.danger { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
     .chip.danger:active { background: #dc2626; color: #fff; }
+
+    /* 자동 문장 안내 */
+    .summary-note {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      margin-top: 8px; font-size: 12.5px; color: var(--muted); font-weight: 600;
+    }
+    .link-btn {
+      background: none; border: 1px solid var(--border); color: #334155; border-radius: 6px;
+      padding: 5px 9px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .link-btn[hidden] { display: none; }
 
     /* 사진 업로드 슬롯 */
     .photo-upload-box {
@@ -76,31 +140,30 @@
     .photo-upload-box img {
       width: 100%; height: 85px; object-fit: cover; border-radius: 6px; display: none; margin-bottom: 6px;
     }
-    .photo-upload-box .placeholder { font-size: 12px; color: var(--muted); padding: 20px 0; }
+    .photo-upload-box .placeholder { font-size: 13px; color: var(--muted); padding: 20px 0; }
     .photo-upload-box input[type="file"] { display: none; }
+    .cap-input { margin-top: 6px; font-size: 14px; padding: 8px; }
 
     /* 전자서명 사인패드 */
     .sign-pad-wrap {
       border: 1.5px solid #cbd5e1; border-radius: 10px; background: #f8fafc;
       position: relative; overflow: hidden; margin-top: 4px;
     }
-    #sign-canvas {
-      width: 100%; height: 120px; display: block;
-      touch-action: none; cursor: crosshair;
-    }
+    #sign-canvas { width: 100%; height: 120px; display: block; touch-action: none; cursor: crosshair; }
     .sign-guide {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 13px; color: #94a3b8; pointer-events: none; font-weight: 600;
+      font-size: 14px; color: #94a3b8; pointer-events: none; font-weight: 600;
     }
     .sign-toolbar {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
       padding: 6px 10px; background: #f1f5f9; border-top: 1px solid #e2e8f0;
     }
-    .sign-toolbar span { font-size: 11px; color: #64748b; }
+    .sign-toolbar span { font-size: 12px; color: #64748b; }
     .btn-clear-sign {
       background: #fff; border: 1px solid #cbd5e1; color: #334155;
-      padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;
+      padding: 6px 10px; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer;
     }
+    .btn-clear-sign:active { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
 
     /* 하단 고정 액션바 */
     .bottom-bar {
@@ -109,7 +172,7 @@
       box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
     }
     .btn {
-      flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+      flex: 1; padding: 13px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-preview { background: #e2e8f0; color: var(--primary); flex: 0.7; }
@@ -129,7 +192,7 @@
     .preview-wrapper { width: 100%; overflow-x: auto; display: flex; justify-content: center; }
 
     /* =========================================================
-       실제 PNG로 캡처될 A4 고정 비율 리포트 영역 (794px 폭)
+       실제 PNG로 캡처될 A4 리포트 영역 (794px 폭)
        ========================================================= */
     #report-paper {
       width: 794px;
@@ -209,7 +272,7 @@
     .rp-lbl { width: 138px; font-weight: 700; color: #475569; flex-shrink: 0; }
     .rp-val { flex: 1; color: #0f172a; font-weight: 500; }
 
-    /* 2단 배치 그리드 (전장옵션 + 30일 정비 로드맵) */
+    /* 2단 배치 그리드 */
     .rp-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 9px; }
     .rp-two-col .rp-section { margin-bottom: 0; }
     .rp-two-col .rp-lbl { width: 82px; }
@@ -276,111 +339,74 @@
   </header>
 
   <main class="form-container">
-    <!-- 1. 기본 정보 & 차대번호/안전벨트 -->
-    <section class="card">
-      <h2 class="card-title">1. 대상 차량 기본 정보 및 동일성 검증</h2>
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="progress-text" id="progress-text">입력 완료 0 / 8</div>
+
+    <!-- ===================== STEP 1 · 차량 확인 ===================== -->
+    <div class="step-label">STEP 1 · 차량 확인</div>
+
+    <section class="card" data-check="sec-car">
+      <h2 class="card-title"><span>1. 대상 차량 기본 정보</span><span class="check" aria-label="입력 완료">✓</span></h2>
       <div class="grid-2">
         <div class="field">
-          <label>차종 / 연식 / 트림</label>
+          <label for="in-car">차종 / 연식 / 트림</label>
           <input type="text" id="in-car" class="persist" placeholder="예: 2021 기아 K5 2.0 노블레스" />
         </div>
         <div class="field">
-          <label>차량번호</label>
+          <label for="in-plate">차량번호</label>
           <input type="text" id="in-plate" class="persist" placeholder="예: 123가 4567" />
         </div>
       </div>
       <div class="grid-3">
         <div class="field">
-          <label>주행거리 (km)</label>
-          <input type="text" id="in-km" class="persist" placeholder="예: 64,210 km" />
+          <label for="in-km">주행거리 (km)</label>
+          <input type="text" inputmode="numeric" id="in-km" class="persist" placeholder="예: 64,210" />
         </div>
         <div class="field">
-          <label>검수일자</label>
+          <label for="in-date">검수일자</label>
           <input type="date" id="in-date" class="persist" />
         </div>
         <div class="field">
-          <label>검수장소</label>
+          <label for="in-loc">검수장소</label>
           <input type="text" id="in-loc" class="persist" value="부산 사상매매단지" />
+          <div class="preset-group">
+            <span class="chip" onclick="setVal('in-loc', '부산 사상매매단지')">사상단지</span>
+            <span class="chip" onclick="setVal('in-loc', '부산 연제매매단지')">연제단지</span>
+            <span class="chip" onclick="setVal('in-loc', '부산 강서매매단지')">강서단지</span>
+            <span class="chip" onclick="setVal('in-loc', '김해·창원 매매단지')">김해·창원</span>
+          </div>
         </div>
       </div>
+
       <div class="grid-2">
         <div class="field">
-          <label>차대번호(VIN) 실물 vs ECU 일치</label>
-          <input type="text" id="in-vin" class="persist" value="실물·등록증·ECU 차대번호 100% 일치 (정상)" />
-          <div class="preset-group">
-            <span class="chip" onclick="setVal('in-vin', '실물·등록증·ECU 차대번호 100% 일치 (정상)')">VIN 100% 일치</span>
-            <span class="chip danger" onclick="setVal('in-vin', 'ECU 차대번호 불일치/미표출 (정밀확인 요망)')">VIN 불일치 주의</span>
+          <label>차대번호(VIN) 실물 vs ECU</label>
+          <div class="seg" data-target="in-vin" style="--n:3">
+            <button type="button" data-key="ok">일치</button>
+            <button type="button" data-key="check" class="tone-warn">미표출</button>
+            <button type="button" data-key="bad" class="tone-bad">불일치</button>
           </div>
+          <input type="hidden" id="in-vin" class="persist" value="실물·등록증·ECU 차대번호 100% 일치 (정상)" />
         </div>
         <div class="field">
-          <label>안전벨트 제조년월 및 침수 흔적</label>
-          <input type="text" id="in-belt" class="persist" value="전 좌석 출고연식 일치 / 흙탕물·부식 없음" />
-          <div class="preset-group">
-            <span class="chip" onclick="setVal('in-belt', '전 좌석 출고연식 일치 / 흙탕물·부식 없음')">벨트·침수 정상</span>
-            <span class="chip warn" onclick="setVal('in-belt', '운전석 벨트 제조일자 상이 (교체 이력 추정)')">벨트 교체흔적</span>
+          <label>안전벨트 제조연식</label>
+          <div class="seg" data-target="in-belt" style="--n:2">
+            <button type="button" data-key="ok">출고연식 일치</button>
+            <button type="button" data-key="swap" class="tone-warn">교체 흔적</button>
           </div>
+          <input type="hidden" id="in-belt" class="persist" value="전 좌석 출고연식 일치 / 흙탕물·부식 없음" />
         </div>
       </div>
     </section>
 
-    <!-- 2. 종합 판정 & 보증보험 구분 & 검수 ROI -->
-    <section class="card">
-      <h2 class="card-title">2. 종합 판정 · 보증보험 구분 · 검수 ROI</h2>
-      <div class="field">
-        <label>종합 매입 판정</label>
-        <select id="in-verdict" class="persist">
-          <option value="ok">🟢 매입 적극 추천 (성능기록부 일치 · 특이하자 없음)</option>
-          <option value="warn" selected>🟡 조건부 매입 추천 (감가 협상 후 매입 권장)</option>
-          <option value="danger">🔴 매입 보류 / 비추천 (사고은폐 · 침수 · 중대결함)</option>
-        </select>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label>성능보증보험 처리 가능 항목 (30일/2천km)</label>
-          <input type="text" id="in-warranty-ok" class="persist" placeholder="예: 오일팬 미세누유 (출고 후 보증수리 대상)" />
-          <div class="preset-group">
-            <span class="chip" onclick="setVal('in-warranty-ok', '해당 없음 (누유·기능고장 무)')">해당 없음</span>
-            <span class="chip" onclick="setVal('in-warranty-ok', '오일팬 미세누유 (출고 후 보증보험 처리대상)')">오일팬 누유(보증)</span>
-          </div>
-        </div>
-        <div class="field">
-          <label>보증 제외 · 즉시 감가 협상 대상 (자비부담)</label>
-          <input type="text" id="in-nego-target" class="persist" placeholder="예: 앞타이어+브레이크액 약 35만 원 감가권장" />
-          <div class="preset-group">
-            <span class="chip" onclick="setVal('in-nego-target', '0원 (정상가 매입 가능)')">감가 없음</span>
-            <span class="chip warn" onclick="setVal('in-nego-target', '소모품 교체비 약 35만 원 현장 감가 권장')">35만 감가</span>
-            <span class="chip warn" onclick="setVal('in-nego-target', '미고지 판금·소모품 약 60만 원 감가 권장')">60만 감가</span>
-          </div>
-        </div>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label>오늘 동행/진단 수수료 (만 원)</label>
-          <input type="number" id="in-fee" class="persist" value="15" />
-        </div>
-        <div class="field">
-          <label>방어한 예상 수리비·감가액 (만 원)</label>
-          <input type="number" id="in-saved" class="persist" value="55" />
-        </div>
-      </div>
-      <div class="field">
-        <label>평가사 핵심 한줄평</label>
-        <textarea id="in-summary" class="persist" placeholder="상용구 버튼을 누르거나 직접 입력하세요."></textarea>
-        <div class="preset-group">
-          <span class="chip" onclick="setVal('in-summary', '성능점검기록부와 100% 일치하며, 주요 골격·파워트레인·전장옵션 모두 최상으로 즉시 운행 가능한 무결점 매물입니다.')">🟢 무결점 추천</span>
-          <span class="chip warn" onclick="setVal('in-summary', '주요 골격 무사고에 엔진·미션 컨디션 양호하나, 보증 제외 소모품 마모가 확인되어 해당 비용 감가 후 매입 추천합니다.')">🟡 소모품 감가</span>
-          <span class="chip warn" onclick="setVal('in-summary', '누유 부위는 출고 후 성능보증보험으로 무상수리 진행하시고, 보증 제외 항목만 현장에서 감가 협상 후 매입 권장합니다.')">🟡 보증+감가 병행</span>
-          <span class="chip danger" onclick="setVal('in-summary', '성능기록부와 상이한 주요 골격 손상(또는 침수·중대결함) 흔적이 확인되어 매입을 비추천합니다.')">🔴 매입 비추천</span>
-        </div>
-      </div>
-    </section>
+    <!-- ===================== STEP 2 · 점검 결과 ===================== -->
+    <div class="step-label">STEP 2 · 점검 결과</div>
 
-    <!-- 3. 외판·골격 및 도막 -->
-    <section class="card">
-      <h2 class="card-title">3. 외판 · 골격 및 도막 측정 (μm)</h2>
+    <section class="card" data-check="sec-body">
+      <h2 class="card-title"><span>2. 외판 · 골격 및 도막 측정 (μm)</span><span class="check" aria-label="입력 완료">✓</span></h2>
       <div class="grid-2">
         <div class="field">
-          <label>성능점검기록부 대조 결과</label>
+          <label for="in-record-match">성능점검기록부 대조 결과</label>
           <select id="in-record-match" class="persist">
             <option value="성능점검기록부 내용과 100% 일치 (정상)">기록부 내용과 100% 일치</option>
             <option value="일부 외판 판금·도장 추가 발견 (고지 누락)">외판 판금·도장 추가 발견</option>
@@ -389,15 +415,16 @@
         </div>
         <div class="field">
           <label>주요 골격 및 외판 교환</label>
-          <select id="in-frame" class="persist">
-            <option value="주요 골격 무사고 (용접·판금·교환 흔적 없음)">주요 골격 무사고 (정상)</option>
-            <option value="단순 외판 볼트체결 교환 있음 / 주요 골격 정상">단순 외판 교환 / 골격 정상</option>
-            <option value="주요 골격(휠하우스·필러·사이드멤버) 수리 흔적">주요 골격 수리 흔적</option>
-          </select>
+          <div class="seg" data-target="in-frame" style="--n:3">
+            <button type="button" data-key="ok">무사고</button>
+            <button type="button" data-key="swap" class="tone-warn">외판 교환</button>
+            <button type="button" data-key="repair" class="tone-bad">골격 수리</button>
+          </div>
+          <input type="hidden" id="in-frame" class="persist" value="주요 골격 무사고 (용접·판금·교환 흔적 없음)" />
         </div>
       </div>
       <div class="field">
-        <label>부위별 도막 측정 수치 (순정 기준 약 90~140μm)</label>
+        <label for="in-paint">부위별 도막 측정 수치 (순정 기준 약 90~140μm)</label>
         <input type="text" id="in-paint" class="persist" value="본넷 115 / 루프 110 / 좌측면 118~124 / 우측면 116~122 (전 부위 순정 도막)" />
         <div class="preset-group">
           <span class="chip" onclick="setVal('in-paint', '본넷 115 / 루프 110 / 좌측면 118~124 / 우측면 116~122 (전 부위 순정 도막)')">전 부위 순정</span>
@@ -407,34 +434,35 @@
       </div>
     </section>
 
-    <!-- 4. 파워트레인 · 하부 · 소모품 -->
-    <section class="card">
-      <h2 class="card-title">4. 파워트레인 · 하부 · 소모품 계측</h2>
+    <section class="card" data-check="sec-powertrain">
+      <h2 class="card-title"><span>3. 파워트레인 · 하부 · 소모품 계측</span><span class="check" aria-label="입력 완료">✓</span></h2>
       <div class="grid-2">
         <div class="field">
-          <label>엔진 / 미션 상태</label>
-          <input type="text" id="in-engine" class="persist" value="누유·누수 없음 / 블로바이 양호 / 변속충격 없음" />
-          <div class="preset-group">
-            <span class="chip" onclick="setVal('in-engine', '누유·누수 없음 / 블로바이 양호 / 변속충격 없음')">완벽 양호</span>
-            <span class="chip warn" onclick="setVal('in-engine', '오일팬 미세누유 확인 / 블로바이·변속 양호')">오일팬 미세누유</span>
+          <label>엔진 / 미션 누유 · 변속 상태</label>
+          <div class="seg" data-target="in-engine" style="--n:3">
+            <button type="button" data-key="none">누유 없음</button>
+            <button type="button" data-key="minor" class="tone-warn">미세누유</button>
+            <button type="button" data-key="major" class="tone-bad">접합부 누유</button>
           </div>
+          <input type="hidden" id="in-engine" class="persist" value="누유·누수 없음 / 블로바이 양호 / 변속충격 없음" />
         </div>
         <div class="field">
-          <label>하부 / 조향 / 부식</label>
+          <label for="in-under">하부 / 조향 / 부식</label>
           <input type="text" id="in-under" class="persist" value="하부 부식 양호 / 부트·로어암 유격 정상" />
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-under', '하부 부식 양호 / 부트·로어암 유격 정상')">하부 정상</span>
             <span class="chip warn" onclick="setVal('in-under', '하부 표면 산화 진행 / 부트·링크 유격 정상')">표면 부식</span>
+            <span class="chip danger" onclick="setVal('in-under', '프론트 로어암 부싱 크랙 및 활대링크 유격 발생 (교환 권장)')">부싱 마모</span>
           </div>
         </div>
       </div>
       <div class="grid-3">
         <div class="field">
-          <label>타이어 트레드 (앞/뒤)</label>
+          <label for="in-tire">타이어 트레드 (앞/뒤)</label>
           <input type="text" id="in-tire" class="persist" value="앞 4.5 / 뒤 5.2mm" />
         </div>
         <div class="field">
-          <label>브레이크액 수분</label>
+          <label for="in-brake-fluid">브레이크액 수분</label>
           <select id="in-brake-fluid" class="persist">
             <option value="1% 미만 (양호)">1% 미만 (양호)</option>
             <option value="2% (교환 권장)">2% (교환 권장)</option>
@@ -442,31 +470,29 @@
           </select>
         </div>
         <div class="field">
-          <label>배터리 SOH / 패드</label>
+          <label for="in-battery">배터리 SOH / 패드</label>
           <input type="text" id="in-battery" class="persist" value="SOH 84% / 패드 60%" />
         </div>
       </div>
     </section>
 
-    <!-- 5. OBD2 전산 스캔 -->
-    <section class="card">
-      <h2 class="card-title">5. OBD2 전산 진단 및 라이브 데이터</h2>
+    <section class="card" data-check="sec-obd">
+      <h2 class="card-title"><span>4. OBD2 전산 진단 및 라이브 데이터</span><span class="check" aria-label="입력 완료">✓</span></h2>
       <div class="field">
-        <label>고장코드(DTC) 스캔 결과</label>
+        <label for="in-dtc">고장코드(DTC) 스캔 결과</label>
         <input type="text" id="in-dtc" class="persist" value="현재 고장코드(DTC) 0건 / 강제 소거 이력 없음 (정상)" />
       </div>
       <div class="field">
-        <label>핵심 센서 라이브 데이터</label>
+        <label for="in-live">핵심 센서 라이브 데이터</label>
         <input type="text" id="in-live" class="persist" value="단기·장기 연료트림 정상 범위(±2% 이내) / 아이들링 및 센서 파형 안정" />
       </div>
     </section>
 
-    <!-- 6. 실내 전장옵션 & 출고 후 30일 정비 로드맵 -->
-    <section class="card">
-      <h2 class="card-title">6. 실내 전장·편의옵션 & 출고 후 30일 정비 로드맵</h2>
+    <section class="card" data-check="sec-options">
+      <h2 class="card-title"><span>5. 실내 전장·편의옵션 & 출고 후 30일 정비 로드맵</span><span class="check" aria-label="입력 완료">✓</span></h2>
       <div class="grid-2">
         <div class="field">
-          <label>공조(에어컨/히터) · 열선/통풍시트</label>
+          <label for="in-opt-hvac">공조(에어컨/히터) · 열선/통풍시트</label>
           <input type="text" id="in-opt-hvac" class="persist" value="에어컨 냉방·히터·전좌석 열선/통풍 정상 작동" />
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-opt-hvac', '에어컨 냉방·히터·전좌석 열선/통풍 정상 작동')">모두 정상</span>
@@ -474,7 +500,7 @@
           </div>
         </div>
         <div class="field">
-          <label>전동미러 · 윈도우 · 카메라 · 선루프</label>
+          <label for="in-opt-elec">전동미러 · 윈도우 · 카메라 · 선루프</label>
           <input type="text" id="in-opt-elec" class="persist" value="접이미러·윈도우·후방카메라·전장스위치 정상" />
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-opt-elec', '접이미러·윈도우·후방카메라·전장스위치 정상')">전장 정상</span>
@@ -484,81 +510,131 @@
       </div>
       <div class="grid-3">
         <div class="field">
-          <label>① 출고 즉시 (1주 내)</label>
+          <label for="in-plan-now">① 출고 즉시 (1주 내)</label>
           <input type="text" id="in-plan-now" class="persist" value="엔진오일·에어컨필터 교환" />
         </div>
         <div class="field">
-          <label>② 1개월 이내 권장</label>
+          <label for="in-plan-1m">② 1개월 이내 권장</label>
           <input type="text" id="in-plan-1m" class="persist" value="보증수리 접수 및 얼라인먼트" />
         </div>
         <div class="field">
-          <label>③ 6개월~1년 뒤</label>
+          <label for="in-plan-6m">③ 6개월~1년 뒤</label>
           <input type="text" id="in-plan-6m" class="persist" value="앞타이어 2짝·브레이크패드 점검" />
         </div>
       </div>
     </section>
 
-    <!-- 7. 증빙 사진 3컷 -->
-    <section class="card">
-      <h2 class="card-title">7. 현장 핵심 증빙 사진 (첫 컷 번호판+진단기 인증 권장)</h2>
-      <div class="grid-3">
+    <section class="card" data-check="sec-photo">
+      <h2 class="card-title"><span>6. 현장 핵심 증빙 사진 (번호판+진단기 권장)</span><span class="check" aria-label="입력 완료">✓</span></h2>
+      <div class="grid-photo">
         <div>
           <div class="photo-upload-box" onclick="document.getElementById('file-1').click()">
             <img id="prev-1" alt="사진1" />
-            <div class="placeholder" id="ph-1">+ 사진 1 선택<br>(번호판+진단기)</div>
+            <div class="placeholder" id="ph-1">+ 사진 1<br>(번호판+진단기)</div>
             <input type="file" id="file-1" accept="image/*" onchange="handlePhoto(1, this)" />
           </div>
-          <input type="text" id="cap-1" class="persist" value="차량 번호판 및 현장 계측 인증" style="margin-top:6px; font-size:12px; padding:6px;" />
+          <input type="text" id="cap-1" class="persist cap-input" value="차량 번호판 및 현장 계측 인증" />
         </div>
         <div>
           <div class="photo-upload-box" onclick="document.getElementById('file-2').click()">
             <img id="prev-2" alt="사진2" />
-            <div class="placeholder" id="ph-2">+ 사진 2 선택<br>(엔진/하부)</div>
+            <div class="placeholder" id="ph-2">+ 사진 2<br>(엔진/하부)</div>
             <input type="file" id="file-2" accept="image/*" onchange="handlePhoto(2, this)" />
           </div>
-          <input type="text" id="cap-2" class="persist" value="엔진룸 및 하부 누유 점검" style="margin-top:6px; font-size:12px; padding:6px;" />
+          <input type="text" id="cap-2" class="persist cap-input" value="엔진룸 및 하부 누유 점검" />
         </div>
         <div>
           <div class="photo-upload-box" onclick="document.getElementById('file-3').click()">
             <img id="prev-3" alt="사진3" />
-            <div class="placeholder" id="ph-3">+ 사진 3 선택<br>(소모품/OBD)</div>
+            <div class="placeholder" id="ph-3">+ 사진 3<br>(소모품/OBD)</div>
             <input type="file" id="file-3" accept="image/*" onchange="handlePhoto(3, this)" />
           </div>
-          <input type="text" id="cap-3" class="persist" value="OBD2 스캔 및 타이어 트레드" style="margin-top:6px; font-size:12px; padding:6px;" />
+          <input type="text" id="cap-3" class="persist cap-input" value="OBD2 스캔 및 타이어 트레드" />
         </div>
       </div>
     </section>
 
-    <!-- 8. 평가사 정보 · 자격증 번호 · 출고 스티커 · 전자서명 -->
-    <section class="card">
-      <h2 class="card-title">8. 담당 평가사 자격 정보 및 자필 전자서명</h2>
+    <!-- ===================== STEP 3 · 판정 · 서명 ===================== -->
+    <div class="step-label">STEP 3 · 판정 · 서명</div>
+
+    <section class="card" data-check="sec-verdict">
+      <h2 class="card-title"><span>7. 종합 판정 · 보증 구분 · 검수 ROI</span><span class="check" aria-label="입력 완료">✓</span></h2>
+      <div class="field">
+        <label for="in-verdict">종합 매입 판정</label>
+        <select id="in-verdict" class="persist">
+          <option value="ok">🟢 매입 적극 추천 (성능기록부 일치 · 특이하자 없음)</option>
+          <option value="warn" selected>🟡 조건부 매입 추천 (감가 협상 후 매입 권장)</option>
+          <option value="danger">🔴 매입 보류 / 비추천 (사고은폐 · 침수 · 중대결함)</option>
+        </select>
+      </div>
       <div class="grid-2">
         <div class="field">
-          <label>담당 평가사 성명</label>
+          <label for="in-warranty-ok">성능보증보험 처리 가능 (30일/2천km)</label>
+          <input type="text" id="in-warranty-ok" class="persist" placeholder="예: 오일팬 미세누유" />
+          <div class="preset-group">
+            <span class="chip" onclick="setVal('in-warranty-ok', '해당 없음 (누유·기능고장 무)')">해당 없음</span>
+            <span class="chip" onclick="setVal('in-warranty-ok', '오일팬 미세누유 (출고 후 보증보험 처리대상)')">오일팬 누유</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="in-nego-target">보증 제외 · 감가 협상 대상</label>
+          <input type="text" id="in-nego-target" class="persist" placeholder="예: 앞타이어+브레이크액 약 35만 원" />
+          <div class="preset-group">
+            <span class="chip" onclick="setVal('in-nego-target', '0원 (정상가 매입 가능)')">감가 없음</span>
+            <span class="chip warn" onclick="setVal('in-nego-target', '소모품 교체비 약 35만 원 현장 감가 권장')">35만 감가</span>
+            <span class="chip warn" onclick="setVal('in-nego-target', '미고지 판금·소모품 약 60만 원 감가 권장')">60만 감가</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="in-fee">진단 수수료 (만 원)</label>
+          <input type="number" inputmode="numeric" id="in-fee" class="persist" value="15" />
+        </div>
+        <div class="field">
+          <label for="in-saved">방어한 예상 수리비·감가액 (만 원)</label>
+          <input type="number" inputmode="numeric" id="in-saved" class="persist" value="55" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="in-summary">평가사 한줄평</label>
+        <textarea id="in-summary" class="persist" placeholder="상태 선택에 따라 자동으로 작성됩니다."></textarea>
+        <div class="summary-note">
+          <span id="summary-note-text">✨ 상태 선택에 따라 자동 작성 · 직접 고치면 수정 모드로 바뀜</span>
+          <button type="button" class="link-btn" id="summary-reset" hidden onclick="resetSummaryAuto()">자동 문장으로 되돌리기</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" data-check="sec-sign">
+      <h2 class="card-title"><span>8. 담당 평가사 자격 및 자필 서명</span><span class="check" aria-label="입력 완료">✓</span></h2>
+      <div class="grid-2">
+        <div class="field">
+          <label for="in-inspector">담당 평가사 성명</label>
           <input type="text" id="in-inspector" class="persist" value="정승원" />
         </div>
         <div class="field">
-          <label>자격증 등록번호</label>
+          <label for="in-cert-no">자격증 등록번호</label>
           <input type="text" id="in-cert-no" class="persist" placeholder="예: 제26-2-00000호" value="제2026-2급-등록확인" />
         </div>
       </div>
       <div class="grid-2">
         <div class="field">
-          <label>보유 자격 명칭</label>
+          <label for="in-license">보유 자격 명칭</label>
           <input type="text" id="in-license" class="persist" value="자동차진단평가사 2급 / 자동차정비산업기사" />
         </div>
         <div class="field">
-          <label>다음 엔진오일 권장 km (스티커 표기용)</label>
+          <label for="in-next-oil">다음 엔진오일 권장 (스티커)</label>
           <input type="text" id="in-next-oil" class="persist" value="출고 즉시 교환 후 +7,000km마다" />
         </div>
       </div>
       <div class="field">
-        <label>평가사 자필 서명 (손가락 또는 스타일러스로 서명)</label>
+        <label>평가사 자필 서명 (손가락 또는 스타일러스)</label>
         <div class="sign-pad-wrap">
           <canvas id="sign-canvas"></canvas>
-          <div class="sign-guide" id="sign-guide">이 영역에 손가락으로 직접 서명해 주세요</div>
+          <div class="sign-guide" id="sign-guide">이 영역에 직접 서명해 주세요</div>
           <div class="sign-toolbar">
-            <span>리포트 하단에 자동 삽입 및 브라우저 영구 보관</span>
+            <span>리포트 하단에 자동 삽입 · 브라우저 보관</span>
             <button type="button" class="btn-clear-sign" onclick="clearSignature()">서명 지우기 ✕</button>
           </div>
         </div>
@@ -569,26 +645,24 @@
   <!-- 하단 액션 바 -->
   <div class="bottom-bar">
     <button class="btn btn-preview" onclick="openPreview()">미리보기</button>
-    <button class="btn btn-save" onclick="exportReport('download')">PNG 이미지 저장</button>
+    <button class="btn btn-save" onclick="exportReport('download')">PNG 저장</button>
     <button class="btn btn-share" onclick="exportReport('share')">카톡/공유</button>
   </div>
 
   <!-- A4 리포트 미리보기 & 렌더링 영역 -->
   <div class="modal" id="preview-modal">
     <div class="modal-top">
-      <span style="font-size:13px; font-weight:600;">A4 표준 리포트 V4 미리보기 (가로 스크롤 가능)</span>
+      <span style="font-size:13px; font-weight:600;">A4 표준 리포트 미리보기 (가로 스크롤 가능)</span>
       <button class="modal-close" onclick="closePreview()">닫기 ✕</button>
     </div>
     <div class="preview-wrapper">
       <div id="report-paper">
         <div>
-          <!-- 최상단 100% 독립 진단 서약 띠 -->
           <div class="rp-pledge-bar">
             <span>🛡️ <span class="hl">100% 의뢰인 전속 독립 진단 서약</span> : 매매상사·딜러로부터 일체의 알선 수수료·리베이트를 받지 않습니다.</span>
             <span id="out-timestamp">검수완료: 2027-03-15 14:30:00</span>
           </div>
 
-          <!-- 헤더 -->
           <div class="rp-header">
             <div>
               <div class="rp-brand">AM, 5H34M AUTOMOTIVE CONCIERGE</div>
@@ -600,7 +674,6 @@
             </div>
           </div>
 
-          <!-- 차량 기본정보 표 -->
           <table class="rp-info-table">
             <tr>
               <th>대상 차종</th>
@@ -622,11 +695,10 @@
             </tr>
           </table>
 
-          <!-- 종합 판정 + 보증보험 구분 + ROI 배너 -->
           <div class="rp-verdict-box warn" id="out-verdict-box">
             <div class="rp-verdict-top">
               <span class="rp-verdict-badge" id="out-verdict-title">🟡 조건부 매입 추천 (감가 협상 후 매입 권장)</span>
-              <span class="rp-roi-badge" id="out-roi-badge">수수료 15만 vs 방어액 55만 → 순수 이득 +40만 원</span>
+              <span class="rp-roi-badge" id="out-roi-badge">수수료 15만 vs 방어액 55만 → 순수 절감 이득 +40만 원</span>
             </div>
             <div class="rp-cost-split">
               <div class="rp-split-item"><span class="tag-ins">보증보험 대상</span> <em style="font-style:normal;" id="out-warranty-ok">-</em></div>
@@ -635,7 +707,6 @@
             <p class="rp-summary-text" id="out-summary">-</p>
           </div>
 
-          <!-- 섹션 1: 외판·골격 및 도막 -->
           <div class="rp-section">
             <div class="rp-sec-title"><span>1. 외판 · 주요 골격 및 도막 두께 계측 (단위: μm)</span><span>성능기록부 교차검증</span></div>
             <div class="rp-sec-body">
@@ -644,7 +715,6 @@
             </div>
           </div>
 
-          <!-- 섹션 2: 파워트레인 · 하부 · 소모품 -->
           <div class="rp-section">
             <div class="rp-sec-title"><span>2. 파워트레인 · 하부 · 핵심 소모품 계측</span><span>실측 데이터 기준</span></div>
             <div class="rp-sec-body">
@@ -654,7 +724,6 @@
             </div>
           </div>
 
-          <!-- 섹션 3: OBD2 전산 스캔 -->
           <div class="rp-section">
             <div class="rp-sec-title"><span>3. OBD2 전산 스캔 및 ECU 라이브 데이터</span><span>전용 스캐너 진단</span></div>
             <div class="rp-sec-body">
@@ -663,7 +732,6 @@
             </div>
           </div>
 
-          <!-- 섹션 4 & 5: 2단 배치 (실내 전장옵션 + 출고 후 30일 정비 로드맵) -->
           <div class="rp-two-col">
             <div class="rp-section">
               <div class="rp-sec-title"><span>4. 실내 전장·편의옵션 작동</span></div>
@@ -681,7 +749,6 @@
             </div>
           </div>
 
-          <!-- 섹션 6: 증빙 사진 3컷 -->
           <div class="rp-section" style="margin-bottom:0;">
             <div class="rp-sec-title"><span>6. 현장 핵심 증빙 사진 (번호판 인증 · 하부 · 계측 데이터)</span><span>감가 협상 및 검수 증빙</span></div>
             <div class="rp-sec-body">
@@ -702,7 +769,6 @@
             </div>
           </div>
 
-          <!-- 출고 후 7일 무료 카톡 정비 자문권 쿠폰 + 오일주기 스티커 안내 -->
           <div class="rp-care-coupon">
             <div class="rp-coupon-left">
               <strong>🎁 [출고 후 7일 무료 카톡 정비 자문권]</strong> 발행일로부터 7일간 경고등 점등이나 카센터 견적서 검증이 필요할 때 카톡으로 사진 전송 시 과잉정비 여부를 무상으로 판독해 드립니다.
@@ -714,7 +780,6 @@
           </div>
         </div>
 
-        <!-- 푸터 -->
         <div class="rp-footer">
           <div class="rp-disclaimer">
             ※ 본 리포트는 의뢰인 요청에 따라 검수 시점의 육안 및 계측 장비(도막측정기·OBD2 스캐너 등)로 진단한 독립 자문 결과이며, 차량 매매 계약의 최종 결정 책임은 의뢰인 본인에게 있습니다.
@@ -737,7 +802,7 @@
 
   <!-- 로딩 화면 -->
   <div class="loading" id="loading">
-    <div>고해상도 진단 리포트 V4 생성 중...</div>
+    <div>고해상도 진단 리포트 생성 중...</div>
     <div style="font-size:12px; font-weight:400; color:#cbd5e1;">잠시만 기다려 주세요 (약 1~2초 소요)</div>
   </div>
 
@@ -746,8 +811,176 @@
     const DEFAULT_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' font-size='13' fill='%2364748b' text-anchor='middle' dy='.3em'>사진 미첨부</text></svg>";
     let photoData = { 1: '', 2: '', 3: '' };
     let signatureData = '';
+    let summaryMode = 'auto'; // 'auto' | 'manual'
 
-    // 캔버스 전자서명 사인패드 초기화
+    // =========================================================
+    // 세그먼트 옵션: 버튼 key → 리포트에 들어갈 문장
+    // =========================================================
+    const OPTIONS = {
+      'in-vin': {
+        ok: '실물·등록증·ECU 차대번호 100% 일치 (정상)',
+        check: 'ECU 차대번호 미표출 (정밀확인 요망)',
+        bad: 'ECU 차대번호 불일치 (정밀확인 요망)'
+      },
+      'in-belt': {
+        ok: '전 좌석 출고연식 일치 / 흙탕물·부식 없음',
+        swap: '운전석 벨트 제조일자 상이 (교체 이력 추정)'
+      },
+      'in-frame': {
+        ok: '주요 골격 무사고 (용접·판금·교환 흔적 없음)',
+        swap: '단순 외판 볼트체결 교환 있음 / 주요 골격 정상',
+        repair: '주요 골격(휠하우스·필러·사이드멤버) 수리 흔적'
+      },
+      'in-engine': {
+        none: '누유·누수 없음 / 블로바이 양호 / 변속충격 없음',
+        minor: '오일팬 미세누유 확인 / 블로바이·변속 양호',
+        major: '엔진·미션 접합부 누유 및 변속 슬립·충격 감지 (정비 요망)'
+      }
+    };
+
+    // 자동 한줄평 문장 조각
+    const SUMMARY_PHRASES = {
+      frame: {
+        ok: '주요 골격 무사고',
+        swap: '외판 볼트체결 교환 외 골격 정상',
+        repair: '골격 수리 흔적 확인'
+      },
+      engine: {
+        none: '누유 없이 엔진·미션 상태 양호',
+        minor: '오일팬 미세누유 확인',
+        major: '접합부 누유 및 변속 이상 확인'
+      },
+      verdict: {
+        ok: '즉시 운행 가능한 무결점 매물로 매입을 적극 추천합니다.',
+        warn: '보증 제외 항목은 감가 협상 후 매입을 권장합니다.',
+        danger: '중대 손상 흔적이 있어 매입을 비추천합니다.'
+      }
+    };
+
+    // 초기화 시 되돌릴 기본값
+    const RESET_VALUES = {
+      'in-car': '', 'in-plate': '', 'in-km': '',
+      'in-vin': OPTIONS['in-vin'].ok,
+      'in-belt': OPTIONS['in-belt'].ok,
+      'in-verdict': 'warn',
+      'in-warranty-ok': '', 'in-nego-target': '',
+      'in-fee': '15', 'in-saved': '55',
+      'in-record-match': '성능점검기록부 내용과 100% 일치 (정상)',
+      'in-frame': OPTIONS['in-frame'].ok,
+      'in-paint': '본넷 115 / 루프 110 / 좌측면 118~124 / 우측면 116~122 (전 부위 순정 도막)',
+      'in-engine': OPTIONS['in-engine'].none,
+      'in-under': '하부 부식 양호 / 부트·로어암 유격 정상',
+      'in-tire': '앞 4.5 / 뒤 5.2mm',
+      'in-brake-fluid': '1% 미만 (양호)',
+      'in-battery': 'SOH 84% / 패드 60%',
+      'in-dtc': '현재 고장코드(DTC) 0건 / 강제 소거 이력 없음 (정상)',
+      'in-live': '단기·장기 연료트림 정상 범위(±2% 이내) / 아이들링 및 센서 파형 안정',
+      'in-opt-hvac': '에어컨 냉방·히터·전좌석 열선/통풍 정상 작동',
+      'in-opt-elec': '접이미러·윈도우·후방카메라·전장스위치 정상',
+      'in-plan-now': '엔진오일·에어컨필터 교환',
+      'in-plan-1m': '보증수리 접수 및 얼라인먼트',
+      'in-plan-6m': '앞타이어 2짝·브레이크패드 점검',
+      'in-next-oil': '출고 즉시 교환 후 +7,000km마다',
+      'cap-1': '차량 번호판 및 현장 계측 인증',
+      'cap-2': '엔진룸 및 하부 누유 점검',
+      'cap-3': 'OBD2 스캔 및 타이어 트레드',
+      'in-summary': ''
+    };
+
+    // 진행률 체크: 섹션 카드 data-check → 완료 조건
+    const filled = id => (document.getElementById(id).value || '').trim() !== '';
+    const SECTION_CHECKS = {
+      'sec-car': () => filled('in-car') && filled('in-plate') && filled('in-km'),
+      'sec-body': () => filled('in-paint') && filled('in-frame') && filled('in-record-match'),
+      'sec-powertrain': () => filled('in-engine') && filled('in-under') && filled('in-battery'),
+      'sec-obd': () => filled('in-dtc') && filled('in-live'),
+      'sec-options': () => filled('in-opt-hvac') && filled('in-opt-elec') && filled('in-plan-now'),
+      'sec-photo': () => [1, 2, 3].some(i => !!photoData[i]),
+      'sec-verdict': () => filled('in-summary'),
+      'sec-sign': () => !!signatureData && filled('in-inspector') && filled('in-cert-no')
+    };
+
+    // =========================================================
+    // 세그먼트 컨트롤
+    // =========================================================
+    function keyFromValue(target, value) {
+      return Object.keys(OPTIONS[target]).find(k => OPTIONS[target][k] === value);
+    }
+
+    function syncSeg(seg) {
+      const target = seg.dataset.target;
+      const key = keyFromValue(target, document.getElementById(target).value);
+      const btns = [...seg.querySelectorAll('button')];
+      const idx = btns.findIndex(b => b.dataset.key === key);
+      btns.forEach((b, i) => b.classList.toggle('on', i === idx));
+      seg.style.setProperty('--i', Math.max(idx, 0));
+      seg.classList.toggle('unset', idx < 0);
+    }
+
+    function syncAllSegs() {
+      document.querySelectorAll('.seg').forEach(syncSeg);
+    }
+
+    function initSegs() {
+      document.querySelectorAll('.seg').forEach(seg => {
+        const target = seg.dataset.target;
+        seg.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.getElementById(target).value = OPTIONS[target][btn.dataset.key];
+            syncSeg(seg);
+            refreshSummary();
+            saveState();
+          });
+        });
+      });
+    }
+
+    // =========================================================
+    // 한줄평 자동 작성
+    // =========================================================
+    function buildSummary() {
+      const frameKey = keyFromValue('in-frame', document.getElementById('in-frame').value);
+      const engineKey = keyFromValue('in-engine', document.getElementById('in-engine').value);
+      const verdictKey = document.getElementById('in-verdict').value;
+      const parts = [
+        SUMMARY_PHRASES.frame[frameKey],
+        SUMMARY_PHRASES.engine[engineKey]
+      ].filter(Boolean);
+      const verdict = SUMMARY_PHRASES.verdict[verdictKey] || '';
+      return (parts.length ? parts.join(', ') + '. ' : '') + verdict;
+    }
+
+    function refreshSummary() {
+      if (summaryMode === 'auto') {
+        document.getElementById('in-summary').value = buildSummary();
+      }
+      updateSummaryNote();
+    }
+
+    function updateSummaryNote() {
+      const isAuto = summaryMode === 'auto';
+      document.getElementById('summary-note-text').textContent = isAuto
+        ? '✨ 상태 선택에 따라 자동 작성 · 직접 고치면 수정 모드로 바뀜'
+        : '✏️ 직접 수정 중 (상태를 바꿔도 문장은 그대로 유지)';
+      document.getElementById('summary-reset').hidden = isAuto;
+    }
+
+    function resetSummaryAuto() {
+      summaryMode = 'auto';
+      refreshSummary();
+      saveState();
+    }
+
+    document.getElementById('in-summary').addEventListener('input', () => {
+      if (summaryMode !== 'manual') {
+        summaryMode = 'manual';
+        updateSummaryNote();
+      }
+    });
+
+    // =========================================================
+    // 캔버스 전자서명 사인패드
+    // =========================================================
     const signCanvas = document.getElementById('sign-canvas');
     const signCtx = signCanvas.getContext('2d');
     const signGuide = document.getElementById('sign-guide');
@@ -758,11 +991,12 @@
       const dpr = Math.max(window.devicePixelRatio || 1, 2);
       signCanvas.width = (rect.width || 320) * dpr;
       signCanvas.height = 120 * dpr;
-      signCtx.scale(dpr, dpr);
+      signCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       signCtx.lineCap = 'round';
       signCtx.lineJoin = 'round';
       signCtx.lineWidth = 2.6;
       signCtx.strokeStyle = '#0f172a';
+      signGuide.style.display = 'flex';
 
       if (restoreDataUrl) {
         const img = new Image();
@@ -815,6 +1049,9 @@
       saveState();
     }
 
+    // =========================================================
+    // 공통 유틸 · 저장 · 진행률
+    // =========================================================
     function getTodayStr() {
       const now = new Date();
       const yyyy = now.getFullYear();
@@ -828,6 +1065,18 @@
       if (el) { el.value = text; saveState(); }
     }
 
+    function updateProgress() {
+      const cards = [...document.querySelectorAll('[data-check]')];
+      let done = 0;
+      cards.forEach(card => {
+        const ok = SECTION_CHECKS[card.dataset.check]();
+        card.classList.toggle('done', ok);
+        if (ok) done++;
+      });
+      document.getElementById('progress-bar').style.width = `${Math.round((done / cards.length) * 100)}%`;
+      document.getElementById('progress-text').textContent = `입력 완료 ${done} / ${cards.length}`;
+    }
+
     function saveState() {
       try {
         const fields = {};
@@ -836,6 +1085,7 @@
           fields,
           photos: photoData,
           signature: signatureData,
+          summaryMode,
           savedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -843,35 +1093,43 @@
       } catch (e) {
         document.getElementById('save-status').textContent = '⚠ 저장공간 부족';
       }
+      updateProgress();
     }
 
     function loadState() {
       document.getElementById('in-date').value = getTodayStr();
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) { initSignCanvas(''); return; }
 
-      try {
-        const data = JSON.parse(raw);
-        if (data.fields) {
-          Object.entries(data.fields).forEach(([id, val]) => {
-            const el = document.getElementById(id);
-            if (el && val !== undefined) el.value = val;
-          });
+      if (raw) {
+        try {
+          const data = JSON.parse(raw);
+          if (data.fields) {
+            Object.entries(data.fields).forEach(([id, val]) => {
+              const el = document.getElementById(id);
+              if (el && val !== undefined) el.value = val;
+            });
+          }
+          if (data.photos) {
+            [1, 2, 3].forEach(idx => {
+              if (data.photos[idx]) {
+                photoData[idx] = data.photos[idx];
+                applyPhotoUI(idx, data.photos[idx]);
+              }
+            });
+          }
+          if (data.signature) signatureData = data.signature;
+          summaryMode = data.summaryMode === 'manual' ? 'manual' : 'auto';
+          if (data.savedAt) document.getElementById('save-status').textContent = `● 이전 작업 복원됨 (${data.savedAt})`;
+        } catch (e) {
+          console.error('복원 오류:', e);
         }
-        if (data.photos) {
-          [1, 2, 3].forEach(idx => {
-            if (data.photos[idx]) {
-              photoData[idx] = data.photos[idx];
-              applyPhotoUI(idx, data.photos[idx]);
-            }
-          });
-        }
-        if (data.signature) signatureData = data.signature;
-        initSignCanvas(signatureData);
-        if (data.savedAt) document.getElementById('save-status').textContent = `● 이전 작업 복원됨 (${data.savedAt})`;
-      } catch (e) {
-        initSignCanvas('');
       }
+
+      syncAllSegs();
+      if (summaryMode === 'auto') document.getElementById('in-summary').value = buildSummary();
+      updateSummaryNote();
+      initSignCanvas(signatureData);
+      updateProgress();
     }
 
     function resetForm() {
@@ -882,38 +1140,11 @@
       keepIds.forEach(id => { kept[id] = document.getElementById(id).value; });
 
       photoData = { 1: '', 2: '', 3: '' };
-
-      document.getElementById('in-car').value = '';
-      document.getElementById('in-plate').value = '';
-      document.getElementById('in-km').value = '';
+      Object.entries(RESET_VALUES).forEach(([id, v]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = v;
+      });
       document.getElementById('in-date').value = getTodayStr();
-      document.getElementById('in-vin').value = '실물·등록증·ECU 차대번호 100% 일치 (정상)';
-      document.getElementById('in-belt').value = '전 좌석 출고연식 일치 / 흙탕물·부식 없음';
-      document.getElementById('in-verdict').value = 'warn';
-      document.getElementById('in-warranty-ok').value = '';
-      document.getElementById('in-nego-target').value = '';
-      document.getElementById('in-fee').value = '15';
-      document.getElementById('in-saved').value = '55';
-      document.getElementById('in-summary').value = '';
-      document.getElementById('in-record-match').selectedIndex = 0;
-      document.getElementById('in-frame').selectedIndex = 0;
-      document.getElementById('in-paint').value = '본넷 115 / 루프 110 / 좌측면 118~124 / 우측면 116~122 (전 부위 순정 도막)';
-      document.getElementById('in-engine').value = '누유·누수 없음 / 블로바이 양호 / 변속충격 없음';
-      document.getElementById('in-under').value = '하부 부식 양호 / 부트·로어암 유격 정상';
-      document.getElementById('in-tire').value = '앞 4.5 / 뒤 5.2mm';
-      document.getElementById('in-brake-fluid').selectedIndex = 0;
-      document.getElementById('in-battery').value = 'SOH 84% / 패드 60%';
-      document.getElementById('in-dtc').value = '현재 고장코드(DTC) 0건 / 강제 소거 이력 없음 (정상)';
-      document.getElementById('in-live').value = '단기·장기 연료트림 정상 범위(±2% 이내) / 아이들링 및 센서 파형 안정';
-      document.getElementById('in-opt-hvac').value = '에어컨 냉방·히터·전좌석 열선/통풍 정상 작동';
-      document.getElementById('in-opt-elec').value = '접이미러·윈도우·후방카메라·전장스위치 정상';
-      document.getElementById('in-plan-now').value = '엔진오일·에어컨필터 교환';
-      document.getElementById('in-plan-1m').value = '보증수리 접수 및 얼라인먼트';
-      document.getElementById('in-plan-6m').value = '앞타이어 2짝·브레이크패드 점검';
-      document.getElementById('in-next-oil').value = '출고 즉시 교환 후 +7,000km마다';
-      document.getElementById('cap-1').value = '차량 번호판 및 현장 계측 인증';
-      document.getElementById('cap-2').value = '엔진룸 및 하부 누유 점검';
-      document.getElementById('cap-3').value = 'OBD2 스캔 및 타이어 트레드';
 
       [1, 2, 3].forEach(idx => {
         document.getElementById(`file-${idx}`).value = '';
@@ -923,10 +1154,17 @@
       });
 
       keepIds.forEach(id => { document.getElementById(id).value = kept[id]; });
+
+      summaryMode = 'auto';
+      syncAllSegs();
+      refreshSummary();
       saveState();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // =========================================================
+    // 사진
+    // =========================================================
     function applyPhotoUI(idx, base64) {
       const prev = document.getElementById(`prev-${idx}`);
       const ph = document.getElementById(`ph-${idx}`);
@@ -958,13 +1196,25 @@
       reader.readAsDataURL(input.files[0]);
     }
 
+    // =========================================================
+    // 이벤트 바인딩
+    // =========================================================
     document.querySelectorAll('.persist').forEach(el => {
       el.addEventListener('input', saveState);
       el.addEventListener('change', saveState);
     });
 
+    document.getElementById('in-verdict').addEventListener('change', () => {
+      refreshSummary();
+      saveState();
+    });
+
+    initSegs();
     window.addEventListener('DOMContentLoaded', loadState);
 
+    // =========================================================
+    // 리포트 동기화 & 내보내기
+    // =========================================================
     function syncReportData() {
       const now = new Date();
       const dateVal = document.getElementById('in-date').value || getTodayStr();
@@ -997,7 +1247,6 @@
         vTitle.textContent = '🔴 매입 보류 / 비추천 (사고은폐 · 침수 · 중대결함)';
       }
 
-      // 검수 ROI 이득 자동 계산
       const fee = parseFloat(document.getElementById('in-fee').value) || 0;
       const saved = parseFloat(document.getElementById('in-saved').value) || 0;
       const net = saved - fee;
