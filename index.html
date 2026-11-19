@@ -772,6 +772,38 @@
         background: var(--card);
       }
     }
+    /* =========================================================
+       PHONE PREVIEW — 좁은 화면에서는 A4 고정폭(794px) 대신 세로로 재배치해
+       가로 스크롤 없이 전 항목·사진을 읽을 수 있게 함.
+       PNG·공유 캡처는 항상 .fixed-a4 (A4 고정) 상태로 찍힘.
+       ========================================================= */
+    .rp-photo-card img { object-fit: contain; background: #EEF1F6; }
+    @media (max-width: 900px) {
+      #report-stage:not(.fixed-a4) { width: 100%; box-sizing: border-box; padding: 12px 10px 28px; align-items: stretch; gap: 20px; }
+      #report-stage:not(.fixed-a4) #report-paper { width: 100%; align-items: stretch; gap: 20px; }
+      #report-stage:not(.fixed-a4) .rp-page-wrap { width: 100%; padding: 0; background: none; }
+      #report-stage:not(.fixed-a4) .rp-page {
+        width: 100%; height: auto; overflow: visible; padding: 22px 16px 40px;
+        border-radius: 12px; box-shadow: 0 10px 24px rgba(11, 14, 20, 0.28);
+      }
+      #report-stage:not(.fixed-a4) .rp-pageno { position: static; text-align: right; margin-top: 12px; }
+      #report-stage:not(.fixed-a4) .rp-two-col,
+      #report-stage:not(.fixed-a4) .rp-cost-split { grid-template-columns: 1fr; }
+      #report-stage:not(.fixed-a4) .rp-row { flex-wrap: wrap; }
+      #report-stage:not(.fixed-a4) .rp-lbl { width: 100%; margin-bottom: 2px; }
+      #report-stage:not(.fixed-a4) .rp-photos { grid-template-columns: 1fr 1fr; gap: 10px; }
+      #report-stage:not(.fixed-a4) .rp-photo-card img { height: 200px; }
+      #report-stage:not(.fixed-a4) .rp-photo-cap { font-size: 13px; padding: 7px 9px; }
+      #report-stage:not(.fixed-a4) .rp-sign { flex-wrap: wrap; text-align: left; width: 100%; min-width: 0; }
+      #report-stage:not(.fixed-a4) .rp-care-coupon { flex-direction: column; align-items: stretch; }
+      #report-stage:not(.fixed-a4) .rp-sticker-tag { text-align: left; }
+      #report-stage:not(.fixed-a4) .rp-footer { flex-direction: column; align-items: stretch; gap: 12px; }
+      #report-stage:not(.fixed-a4) .rp-disclaimer { max-width: none; }
+      #report-stage:not(.fixed-a4) .rp-sign-img-wrap { align-self: flex-start; }
+      #report-stage:not(.fixed-a4) .rp-sign-info, #report-stage:not(.fixed-a4) .rp-sign-info * { overflow-wrap: anywhere; }
+      #report-stage:not(.fixed-a4) .rp-sign-info { flex: 1 1 200px; min-width: 0; }
+      #report-stage:not(.fixed-a4) .rp-slogan-main, #report-stage:not(.fixed-a4) .rp-slogan-sub { white-space: normal; }
+    }
   </style>
 </head>
 <body>
@@ -1163,7 +1195,7 @@
   <!-- A4 리포트 미리보기 & 렌더링 영역 -->
   <div class="modal" id="preview-modal">
     <div class="modal-top">
-      <span style="font-size:13px; font-weight:600;">A4 표준 리포트 미리보기 (가로 스크롤 가능)</span>
+      <span style="font-size:13px; font-weight:600;">A4 표준 리포트 미리보기</span>
       <button class="modal-close" onclick="closePreview()">닫기 ✕</button>
     </div>
     <div class="preview-wrapper">
@@ -1934,10 +1966,16 @@
       });
     }
 
+    // 페이지 나눔·캡처는 A4 고정 레이아웃 기준으로만 계산 (화면 재배치와 분리)
+    function setFixedA4(on) {
+      document.getElementById('report-stage').classList.toggle('fixed-a4', on);
+    }
+
     function openPreview() {
       syncReportData();
       document.getElementById('preview-modal').classList.add('active');
-      paginateReport();
+      setFixedA4(true);
+      try { paginateReport(); } finally { setFixedA4(false); }
     }
 
     function closePreview() {
@@ -1956,6 +1994,7 @@
       await new Promise(r => setTimeout(r, 150));
 
       try {
+        setFixedA4(true);
         paginateReport();
         const wraps = [...document.querySelectorAll('#report-paper .rp-page-wrap')];
         const canvases = [];
@@ -1996,6 +2035,7 @@
       } catch (e) {
         alert('이미지 생성 중 오류가 발생했습니다: ' + e.message);
       } finally {
+        setFixedA4(false);
         loading.classList.remove('active');
         if (!wasOpen) modal.classList.remove('active');
       }
