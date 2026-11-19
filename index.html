@@ -656,6 +656,16 @@
     #report-paper .rp-sign-info { color: #0B0E14; font-weight: 700; }
     #report-paper .rp-sign-sub { color: #1B1F27; font-weight: 600; }
 
+    /* 자유 메모 블록 (입력 메모가 있을 때만 표시) */
+    #report-paper .rp-memo {
+      margin-top: 10px; padding: 9px 12px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F4F6FA 100%);
+      border: 1px solid #C8CED8; border-left: 4px solid #4D2689;
+    }
+    #report-paper .rp-memo[hidden] { display: none; }
+    #report-paper .rp-memo-title { font-size: 11px; font-weight: 800; color: #4D2689; margin-bottom: 4px; }
+    #report-paper .rp-memo-body { font-size: 11.5px; font-weight: 500; color: #1B1F27; line-height: 1.6; white-space: pre-wrap; }
+
     /* 명함 · 프로필 한줄 슬로건 */
     #report-paper .rp-slogan {
       margin-top: 8px; padding: 7px 10px;
@@ -1028,6 +1038,14 @@
         </div>
       </div>
     </section>
+
+    <section class="card" data-memo-card>
+      <h2 class="card-title"><span>9. 자유 메모 (리포트 하단에 추가)</span></h2>
+      <div class="field">
+        <label for="in-memo">메모 내용</label>
+        <textarea id="in-memo" class="persist" rows="5" placeholder="예: 고객 상담 내용, 특이사항, 다음 방문 일정 등 자유롭게 작성하세요. 비워두면 리포트에 표시되지 않습니다."></textarea>
+      </div>
+    </section>
   </main>
 
   <!-- 하단 액션 바 -->
@@ -1156,6 +1174,11 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="rp-memo" id="out-memo-wrap" hidden>
+            <div class="rp-memo-title">메모</div>
+            <div class="rp-memo-body" id="out-memo"></div>
           </div>
 
           <div class="rp-care-coupon">
@@ -1649,6 +1672,9 @@
 
       document.getElementById('out-warranty-ok').textContent = document.getElementById('in-warranty-ok').value || '해당 없음';
       document.getElementById('out-nego-target').textContent = document.getElementById('in-nego-target').value || '0원 (정상가 매입)';
+      const memoText = (document.getElementById('in-memo').value || '').trim();
+      document.getElementById('out-memo').textContent = memoText;
+      document.getElementById('out-memo-wrap').hidden = !memoText;
       document.getElementById('out-summary').textContent =
         document.getElementById('in-summary').value || '주요 골격 및 파워트레인 계측 결과 특이 결함 없이 양호한 상태를 유지하고 있습니다.';
 
