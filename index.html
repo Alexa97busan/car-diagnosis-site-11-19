@@ -672,6 +672,32 @@
     #report-paper .rp-disclaimer { color: #4B5563; }
     #report-paper .rp-sign-info { color: #0B0E14; font-weight: 700; }
     #report-paper .rp-sign-sub { color: #1B1F27; font-weight: 600; }
+
+    /* =========================================================
+       WIDE — 1100px 이상: 섹션 카드를 16:9 가로 격자로 배치
+       · 카드 한 장 = 16:9 비율, 2열로 가로 나열
+       · 내용이 카드보다 길면 카드 안에서만 스크롤, 제목줄은 상단 고정
+       · 1100px 미만(모바일·태블릿)은 기존 세로 배치 그대로
+       ========================================================= */
+    @media (min-width: 1100px) {
+      .form-container {
+        max-width: 1640px; padding: 16px 28px 32px;
+        display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;
+      }
+      .form-container > .progress,
+      .form-container > .progress-text,
+      .form-container > .step-label { flex: 0 0 100%; margin: 0; }
+      .form-container > .step-label { margin-top: 10px; }
+      .form-container > .card {
+        flex: 0 0 calc(50% - 7px); margin: 0; padding: 18px 20px;
+        aspect-ratio: 16 / 9; overflow-y: auto; overscroll-behavior: contain;
+      }
+      .form-container > .card .card-title {
+        position: sticky; top: -18px; z-index: 2;
+        margin: -18px -20px 14px; padding: 18px 20px 10px;
+        background: var(--card);
+      }
+    }
   </style>
 </head>
 <body>
