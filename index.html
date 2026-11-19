@@ -760,6 +760,11 @@
         flex: 0 0 calc(50% - 7px); margin: 0; padding: 18px 20px;
         aspect-ratio: 16 / 9; overflow-y: auto; overscroll-behavior: contain;
       }
+      /* 7번 카드: 내용이 길어도 내부 스크롤 없이 칸이 늘어나도록 */
+      .form-container > .card[data-check="sec-verdict"] {
+        aspect-ratio: auto; overflow: visible;
+      }
+      .form-container > .card[data-check="sec-verdict"] .card-title { position: static; }
       .form-container > .card .card-title {
         position: sticky; top: -18px; z-index: 2;
         margin: -18px -20px 14px; padding: 18px 20px 10px;
