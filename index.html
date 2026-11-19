@@ -510,6 +510,64 @@
     .modal { background: rgba(11, 14, 20, 0.88); }
     .modal-close { background: var(--primary); border-color: var(--violet-soft); color: #FFFFFF; }
     .modal-close:hover { background: var(--violet-line); }
+
+    /* =========================================================
+       v4 PAPER — 리포트 용지 · 미리보기 · PNG · 공유 공통
+       html2canvas는 blur 그림자/그라데이션을 제대로 그리지 못하므로
+       그림자 대신 "단색 레이어"(두께 차이 있는 선·블록)로 층을 표현
+       ========================================================= */
+    #report-paper {
+      background: #FFFFFF;
+      color: #1B1F27;
+      box-shadow: none;
+      border: 1px solid #CBD1DC;
+      border-top: 8px solid #0B0E14;
+    }
+    #report-paper * { border-radius: 0 !important; }
+
+    /* 최상단 띠 · 헤더 */
+    #report-paper .rp-pledge-bar { background: #0B0E14; color: #FFFFFF; }
+    #report-paper .rp-pledge-bar span.hl { color: #FFDD00; }
+    #report-paper .rp-header { border-bottom: 3px solid #0B0E14; }
+    #report-paper .rp-brand { color: #7E3AF2; }
+    #report-paper .rp-title { color: #0B0E14; }
+    #report-paper .rp-doc-meta { color: #6B7280; }
+
+    /* 정보 표 */
+    #report-paper .rp-info-table th, #report-paper .rp-info-table td { border-color: #CBD1DC; }
+    #report-paper .rp-info-table th { background: #F3F5F8; color: #1B1F27; }
+    #report-paper .rp-info-table td { color: #0B0E14; }
+
+    /* 판정 · ROI */
+    #report-paper .rp-roi-badge { background: #0B0E14; color: #FFDD00; }
+    #report-paper .rp-split-item { border-color: #CBD1DC; color: #0B0E14; background: #FFFFFF; }
+    #report-paper .tag-ins { background: #EDE6FD; color: #4D2689; }
+    #report-paper .rp-summary-text { color: #1B1F27; }
+
+    /* 섹션 — 블랙 헤더 바 + 보라 액센트 레이어 */
+    #report-paper .rp-sec-title {
+      background: #0B0E14; color: #FFFFFF; border-left: 5px solid #7E3AF2;
+    }
+    #report-paper .rp-sec-body { border-color: #CBD1DC; }
+    #report-paper .rp-lbl { color: #6B7280; }
+    #report-paper .rp-val { color: #0B0E14; }
+
+    /* 사진 */
+    #report-paper .rp-photo-card { border-color: #CBD1DC; background: #F3F5F8; }
+    #report-paper .rp-photo-cap { color: #1B1F27; border-top-color: #E0E4EB; background: #FFFFFF; }
+
+    /* 쿠폰 · 씰 */
+    #report-paper .rp-care-coupon { border: 2px dashed #7E3AF2; background: #F5F0FF; }
+    #report-paper .rp-coupon-left { color: #4D2689; }
+    #report-paper .rp-coupon-left strong { color: #7E3AF2; }
+    #report-paper .rp-sticker-tag { background: #7E3AF2; color: #FFFFFF; }
+
+    /* 푸터 · 서명 */
+    #report-paper .rp-footer { border-top: 3px solid #0B0E14; }
+    #report-paper .rp-disclaimer { color: #6B7280; }
+    #report-paper .rp-sign-info { color: #0B0E14; }
+    #report-paper .rp-sign-sub { color: #1B1F27; }
+    #report-paper .rp-sign-img-wrap { border-bottom-color: #9CA3AF; }
   </style>
 </head>
 <body>
@@ -972,7 +1030,7 @@
             <div class="rp-sign-info">
               <div>담당 진단평가사: <span id="out-inspector">정승원</span> (자필서명)</div>
               <div class="rp-sign-sub" id="out-license">자동차진단평가사 2급 / 자동차정비산업기사</div>
-              <div class="rp-sign-sub" style="color:#2563eb;">자격등록번호: <span id="out-cert-no">제2026-2급-등록확인</span></div>
+              <div class="rp-sign-sub" style="color:#7E3AF2;">자격등록번호: <span id="out-cert-no">제2026-2급-등록확인</span></div>
             </div>
             <div class="rp-sign-img-wrap" id="out-sign-wrap">
               <img id="out-sign-img" alt="평가사 서명" />
@@ -987,7 +1045,7 @@
   <!-- 로딩 화면 -->
   <div class="loading" id="loading">
     <div>고해상도 진단 리포트 생성 중...</div>
-    <div style="font-size:12px; font-weight:400; color:#cbd5e1;">잠시만 기다려 주세요 (약 1~2초 소요)</div>
+    <div style="font-size:12px; font-weight:400; color:#9CA3AF;">잠시만 기다려 주세요 (약 1~2초 소요)</div>
   </div>
 
   <script>
