@@ -82,6 +82,11 @@
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
     textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+    /* 자동 높이 칸: 내용이 길면 줄바꿈되며 칸이 아래로 늘어남 */
+    textarea.autogrow {
+      resize: none; overflow: hidden; min-height: 46px; height: auto;
+      padding: 11px 12px; line-height: 1.45; word-break: keep-all;
+    }
     input[type="hidden"] { display: none; }
 
     /* 세그먼트 (정해진 상태 선택) */
@@ -1005,7 +1010,7 @@
       <div class="grid-2">
         <div class="field">
           <label for="in-warranty-ok">성능보증보험 처리 가능 (30일/2천km)</label>
-          <input type="text" id="in-warranty-ok" class="persist" placeholder="예: 오일팬 미세누유" />
+          <textarea id="in-warranty-ok" class="persist autogrow" rows="1" placeholder="예: 오일팬 미세누유"></textarea>
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-warranty-ok', '해당 없음 (누유·기능고장 무)')">해당 없음</span>
             <span class="chip" onclick="setVal('in-warranty-ok', '오일팬 미세누유 (출고 후 보증보험 처리대상)')">오일팬 누유</span>
@@ -1013,7 +1018,7 @@
         </div>
         <div class="field">
           <label for="in-nego-target">보증 제외 · 감가 협상 대상</label>
-          <input type="text" id="in-nego-target" class="persist" placeholder="예: 앞타이어+브레이크액 약 35만 원" />
+          <textarea id="in-nego-target" class="persist autogrow" rows="1" placeholder="예: 앞타이어+브레이크액 약 35만 원"></textarea>
           <div class="preset-group">
             <span class="chip" onclick="setVal('in-nego-target', '0원 (정상가 매입 가능)')">감가 없음</span>
             <span class="chip warn" onclick="setVal('in-nego-target', '소모품 교체비 약 35만 원 현장 감가 권장')">35만 감가</span>
@@ -1516,7 +1521,16 @@
 
     function setVal(id, text) {
       const el = document.getElementById(id);
-      if (el) { el.value = text; saveState(); }
+      if (el) { el.value = text; fitAutoGrow(el); saveState(); }
+    }
+
+    function fitAutoGrow(el) {
+      if (!el || !el.classList.contains('autogrow')) return;
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
+    function fitAllAutoGrow() {
+      document.querySelectorAll('textarea.autogrow').forEach(fitAutoGrow);
     }
 
     function updateProgress() {
@@ -1581,6 +1595,7 @@
 
       syncAllSegs();
       if (summaryMode === 'auto') document.getElementById('in-summary').value = buildSummary();
+      fitAllAutoGrow();
       updateSummaryNote();
       initSignCanvas(signatureData);
       updateProgress();
@@ -1608,6 +1623,7 @@
       });
 
       keepIds.forEach(id => { document.getElementById(id).value = kept[id]; });
+      fitAllAutoGrow();
 
       summaryMode = 'auto';
       syncAllSegs();
@@ -1662,6 +1678,15 @@
       refreshSummary();
       saveState();
     });
+
+    // 자동 높이 칸: 입력할 때마다 높이 맞춤, Enter는 줄바꿈 대신 무시
+    document.addEventListener('input', e => {
+      if (e.target.matches && e.target.matches('textarea.autogrow')) fitAutoGrow(e.target);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.target.matches && e.target.matches('textarea.autogrow')) e.preventDefault();
+    });
+    window.addEventListener('resize', fitAllAutoGrow);
 
     initSegs();
     window.addEventListener('DOMContentLoaded', loadState);
