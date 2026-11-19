@@ -436,8 +436,80 @@
     /* 단계 라벨 */
     .step-label { letter-spacing: 0.6px; }
 
-    /* 모달 — 최상위 레이어 */
-    .modal-close { border: 1px solid var(--violet-soft); }
+    /* =========================================================
+       v4 COLOR SYSTEM (디자인 md 팔레트)
+       60% 화이트/오프화이트 · 30% 테크니컬 그레이 · 7% 보라 · 3% 옐로
+       상태색(정상·주의·불량)은 판정 의미를 위해 유지
+       ========================================================= */
+    :root {
+      --primary: #0B0E14;        /* gray-900: 헤더, 제목 */
+      --accent: #7E3AF2;         /* violet-line: 진행바, 저장 */
+      --ok: #16a34a;             /* 정상 판정 (의미색 유지) */
+      --warn: #B45309;           /* 주의 판정 (의미색 유지) */
+      --bad: #B91C1C;            /* 불량 판정 (의미색 유지) */
+      --bg: #E2E6EE;             /* 그라데이션 중간 톤 */
+      --card: #FFFFFF;           /* 화이트 캔버스 */
+      --border: #CBD1DC;         /* gray-300 */
+      --text: #1B1F27;           /* gray-800 */
+      --muted: #6B7280;          /* gray-500 */
+      --violet-line: #7E3AF2;    /* 1px 와이어 · 포커스 · 저장 버튼 */
+      --violet-deep: #4D2689;    /* jun-purple */
+      --yellow: #FFDD00;         /* jun-yellow: 시그니처 포인트 */
+    }
+
+    /* 배경: 4단 수직 뎁스 그라데이션 */
+    body {
+      background:
+        radial-gradient(circle at 50% -10%, #FFFFFF 0%, rgba(255,255,255,0.6) 22%, transparent 60%),
+        linear-gradient(180deg, #F0F2F6 0%, #E2E6EE 35%, #D4D9E2 70%, #C8CED8 100%);
+      background-attachment: fixed;
+    }
+
+    .app-header { background: var(--primary); border-bottom-color: var(--violet-line); }
+    .save-status { color: var(--yellow); }
+    .btn-reset { background: #1B1F27; border-color: #CBD1DC; color: #FFFFFF; }
+    .btn-reset:active { background: var(--violet-deep); border-color: var(--violet-deep); }
+
+    .card { background: linear-gradient(180deg, #FFFFFF 0%, #FAFAFC 100%); border-color: var(--border); }
+    .card-title { color: var(--primary); border-bottom-color: var(--violet-soft); }
+    .step-label { color: var(--muted); }
+    .progress { background: #E0E4EB; }
+    .progress-text { color: var(--muted); }
+
+    input[type="text"], input[type="date"], select, textarea {
+      background: #FFFFFF; border-color: var(--border); color: var(--text);
+    }
+    input::placeholder { color: #9CA3AF; }
+    input:focus, select:focus, textarea:focus { border-color: var(--violet-line); }
+
+    .seg { background: #E0E4EB; }
+    .seg button { color: var(--muted); }
+    .seg button.on { color: var(--primary); }
+    .seg::before { background: #FFFFFF; }
+
+    .chip { background: #F5F0FF; color: var(--violet-deep); border-color: rgba(126, 58, 242, 0.35); }
+    .chip:active { background: var(--violet-deep); color: #FFFFFF; }
+    .chip.warn { background: #FFFBE6; color: #7A4A00; border-color: #FFDD00; }
+    .chip.warn:active { background: #FFDD00; color: #0B0E14; }
+    .chip.danger { background: #FEF2F2; color: var(--bad); border-color: #FECACA; }
+    .chip.danger:active { background: var(--bad); color: #FFFFFF; }
+    .chip:hover { box-shadow: 0 0 0 1px rgba(126,58,242,0.55), 0 0 14px rgba(126,58,242,0.34); }
+
+    .summary-note { color: var(--muted); }
+    .link-btn { background: #FFFFFF; color: var(--text); border-color: var(--border); }
+    .btn-clear-sign { background: #FFFFFF; border-color: var(--border); color: var(--text); }
+    .btn-clear-sign:active { background: #F5F0FF; color: var(--violet-deep); border-color: var(--violet-line); }
+
+    .bottom-bar { background: #FFFFFF; }
+    .btn-preview { background: #E0E4EB; color: var(--primary); }
+    .btn-save { background: var(--violet-line); color: #FFFFFF; }
+    .btn-save:hover { box-shadow: 0 10px 16px -10px rgba(15,23,42,0.45), 0 0 16px rgba(126,58,242,0.6); }
+    .btn-share { background: var(--yellow); color: var(--primary); }
+    .btn-share:hover { box-shadow: 0 10px 16px -10px rgba(15,23,42,0.45), 0 0 16px rgba(255,221,0,0.7); }
+
+    .modal { background: rgba(11, 14, 20, 0.88); }
+    .modal-close { background: var(--primary); border-color: var(--violet-soft); color: #FFFFFF; }
+    .modal-close:hover { background: var(--violet-line); }
   </style>
 </head>
 <body>
