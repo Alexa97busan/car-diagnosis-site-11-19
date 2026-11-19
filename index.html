@@ -81,6 +81,30 @@
     .photo-upload-box .placeholder { font-size: 12px; color: var(--muted); padding: 20px 0; }
     .photo-upload-box input[type="file"] { display: none; }
 
+    /* 전자서명 사인패드 스타일 */
+    .sign-pad-wrap {
+      border: 1.5px solid #cbd5e1; border-radius: 10px; background: #f8fafc;
+      position: relative; overflow: hidden; margin-top: 4px;
+    }
+    #sign-canvas {
+      width: 100%; height: 130px; display: block;
+      touch-action: none; cursor: crosshair;
+    }
+    .sign-guide {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: #94a3b8; pointer-events: none; font-weight: 600;
+    }
+    .sign-toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 10px; background: #f1f5f9; border-top: 1px solid #e2e8f0;
+    }
+    .sign-toolbar span { font-size: 11px; color: #64748b; }
+    .btn-clear-sign {
+      background: #fff; border: 1px solid #cbd5e1; color: #334155;
+      padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;
+    }
+    .btn-clear-sign:active { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
     /* 하단 고정 액션바 */
     .bottom-bar {
       position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
@@ -178,20 +202,27 @@
       text-align: center; border-top: 1px solid #e2e8f0; background: #fff;
     }
 
-    /* 푸터 및 직인 */
+    /* 푸터 및 직인 + 수기 서명 */
     .rp-footer {
       border-top: 2px solid #0f172a; padding-top: 12px; margin-top: 8px;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .rp-disclaimer { font-size: 11px; color: #64748b; line-height: 1.4; max-width: 440px; }
+    .rp-disclaimer { font-size: 11px; color: #64748b; line-height: 1.4; max-width: 390px; }
     .rp-sign { display: flex; align-items: center; gap: 10px; text-align: right; }
     .rp-sign-info { font-size: 12.5px; font-weight: 700; color: #0f172a; line-height: 1.4; }
     .rp-sign-sub { font-size: 11px; color: #475569; font-weight: 500; }
+    .rp-sign-img-wrap {
+      width: 96px; height: 44px; border-bottom: 1px dashed #94a3b8;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    #out-sign-img {
+      max-width: 100%; max-height: 42px; object-fit: contain; display: none;
+    }
     .rp-stamp {
       width: 44px; height: 44px; border: 2.5px solid #dc2626; border-radius: 6px;
       color: #dc2626; font-size: 11px; font-weight: 900; display: flex;
       align-items: center; justify-content: center; text-align: center; line-height: 1.15;
-      transform: rotate(-4deg);
+      transform: rotate(-4deg); flex-shrink: 0;
     }
 
     /* 로딩 오버레이 */
@@ -432,10 +463,10 @@
       </div>
     </section>
 
-    <!-- 7. 평가사 정보 -->
+    <!-- 7. 평가사 정보 및 전자서명 사인패드 -->
     <section class="card">
-      <h2 class="card-title">7. 담당 평가사 서명 정보</h2>
-      <div class="grid-2">
+      <h2 class="card-title">7. 담당 평가사 정보 및 전자서명</h2>
+      <div class="grid-2" style="margin-bottom: 12px;">
         <div class="field">
           <label>담당 평가사 성명</label>
           <input type="text" id="in-inspector" class="persist" value="정승원" />
@@ -443,6 +474,17 @@
         <div class="field">
           <label>보유 자격 및 소속</label>
           <input type="text" id="in-license" class="persist" value="자동차진단평가사 2급 / 자동차정비산업기사" />
+        </div>
+      </div>
+      <div class="field">
+        <label>평가사 자필 서명 (손가락 또는 스타일러스로 서명)</label>
+        <div class="sign-pad-wrap">
+          <canvas id="sign-canvas"></canvas>
+          <div class="sign-guide" id="sign-guide">이 영역에 손가락으로 직접 서명해 주세요</div>
+          <div class="sign-toolbar">
+            <span>리포트 하단에 자동 삽입 및 브라우저 보관</span>
+            <button type="button" class="btn-clear-sign" onclick="clearSignature()">서명 지우기 ✕</button>
+          </div>
         </div>
       </div>
     </section>
@@ -559,8 +601,11 @@
           </div>
           <div class="rp-sign">
             <div class="rp-sign-info">
-              <div>담당 진단평가사: <span id="out-inspector">정승원</span> (인)</div>
+              <div>담당 진단평가사: <span id="out-inspector">정승원</span> (서명)</div>
               <div class="rp-sign-sub" id="out-license">자동차진단평가사 2급 / 자동차정비산업기사</div>
+            </div>
+            <div class="rp-sign-img-wrap" id="out-sign-wrap">
+              <img id="out-sign-img" alt="평가사 서명" />
             </div>
             <div class="rp-stamp">정밀진단<br>확인필</div>
           </div>
@@ -576,9 +621,83 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'am5h34m_car_report_v2';
+    const STORAGE_KEY = 'am5h34m_car_report_v3';
     const DEFAULT_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' font-size='14' fill='%2364748b' text-anchor='middle' dy='.3em'>사진 미첨부</text></svg>";
     let photoData = { 1: '', 2: '', 3: '' };
+    let signatureData = '';
+
+    // =========================================================
+    // 캔버스 전자서명 사인패드 초기화 및 터치/펜 드로잉 로직
+    // =========================================================
+    const signCanvas = document.getElementById('sign-canvas');
+    const signCtx = signCanvas.getContext('2d');
+    const signGuide = document.getElementById('sign-guide');
+    let isDrawing = false;
+
+    function initSignCanvas(restoreDataUrl) {
+      const rect = signCanvas.getBoundingClientRect();
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
+      signCanvas.width = (rect.width || 320) * dpr;
+      signCanvas.height = 130 * dpr;
+      signCtx.scale(dpr, dpr);
+      signCtx.lineCap = 'round';
+      signCtx.lineJoin = 'round';
+      signCtx.lineWidth = 2.6;
+      signCtx.strokeStyle = '#0f172a';
+
+      if (restoreDataUrl) {
+        const img = new Image();
+        img.onload = () => {
+          signCtx.drawImage(img, 0, 0, rect.width || 320, 130);
+          signGuide.style.display = 'none';
+        };
+        img.src = restoreDataUrl;
+      }
+    }
+
+    function getCanvasPos(e) {
+      const rect = signCanvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    signCanvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      signCanvas.setPointerCapture(e.pointerId);
+      isDrawing = true;
+      signGuide.style.display = 'none';
+      const pos = getCanvasPos(e);
+      signCtx.beginPath();
+      signCtx.moveTo(pos.x, pos.y);
+    });
+
+    signCanvas.addEventListener('pointermove', (e) => {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getCanvasPos(e);
+      signCtx.lineTo(pos.x, pos.y);
+      signCtx.stroke();
+    });
+
+    function finishStroke(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+      signatureData = signCanvas.toDataURL('image/png');
+      saveState();
+    }
+
+    signCanvas.addEventListener('pointerup', finishStroke);
+    signCanvas.addEventListener('pointercancel', finishStroke);
+
+    function clearSignature() {
+      const rect = signCanvas.getBoundingClientRect();
+      signCtx.clearRect(0, 0, rect.width || 600, 130);
+      signatureData = '';
+      signGuide.style.display = 'flex';
+      saveState();
+    }
 
     // 오늘 날짜 문자열 반환
     function getTodayStr() {
@@ -614,7 +733,12 @@
         document.querySelectorAll('.persist').forEach(el => {
           fields[el.id] = el.value;
         });
-        const payload = { fields, photos: photoData, savedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) };
+        const payload = {
+          fields,
+          photos: photoData,
+          signature: signatureData,
+          savedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
         document.getElementById('save-status').textContent = `● 자동저장 완료 (${payload.savedAt})`;
       } catch (e) {
@@ -626,7 +750,10 @@
     function loadState() {
       document.getElementById('in-date').value = getTodayStr();
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
+      if (!raw) {
+        initSignCanvas('');
+        return;
+      }
 
       try {
         const data = JSON.parse(raw);
@@ -644,23 +771,28 @@
             }
           });
         }
+        if (data.signature) {
+          signatureData = data.signature;
+        }
+        initSignCanvas(signatureData);
+
         if (data.savedAt) {
           document.getElementById('save-status').textContent = `● 이전 작업 복원됨 (${data.savedAt})`;
         }
       } catch (e) {
         console.error('복원 오류:', e);
+        initSignCanvas('');
       }
     }
 
-    // 새 차량 초기화 (평가사 이름·자격증·검수장소는 유지)
+    // 새 차량 초기화 (평가사 이름·자격증·검수장소·자필서명은 유지!)
     function resetForm() {
-      if (!confirm('현재 작성 중인 차량 정보와 사진을 모두 지우고 새 차량 검수로 초기화할까요?')) return;
+      if (!confirm('현재 작성 중인 차량 정보와 사진을 모두 지우고 새 차량 검수로 초기화할까요?\n(평가사 정보와 등록된 자필 서명은 그대로 유지됩니다)')) return;
 
       const keepIds = ['in-inspector', 'in-license', 'in-loc'];
       const kept = {};
       keepIds.forEach(id => { kept[id] = document.getElementById(id).value; });
 
-      localStorage.removeItem(STORAGE_KEY);
       photoData = { 1: '', 2: '', 3: '' };
 
       // 기본값 리셋
@@ -708,7 +840,7 @@
       outImg.src = base64;
     }
 
-    // 스마트폰 고화질 사진을 localStorage 한도(5MB)에 맞게 자동 리사이징 압축
+    // 스마트폰 고화질 사진을 localStorage 한도에 맞게 자동 리사이징 압축
     function handlePhoto(idx, input) {
       if (!input.files || !input.files[0]) return;
       const reader = new FileReader();
@@ -728,7 +860,6 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
 
-          // JPEG 0.78 품질 압축 -> 장당 약 120~180KB로 경량화
           const compressed = canvas.toDataURL('image/jpeg', 0.78);
           photoData[idx] = compressed;
           applyPhotoUI(idx, compressed);
@@ -801,6 +932,18 @@
 
       document.getElementById('out-inspector').textContent = document.getElementById('in-inspector').value || '정승원';
       document.getElementById('out-license').textContent = document.getElementById('in-license').value;
+
+      // 자필 서명 이미지 동기화
+      const outSignImg = document.getElementById('out-sign-img');
+      const outSignWrap = document.getElementById('out-sign-wrap');
+      if (signatureData) {
+        outSignImg.src = signatureData;
+        outSignImg.style.display = 'block';
+        outSignWrap.style.display = 'flex';
+      } else {
+        outSignImg.style.display = 'none';
+        outSignWrap.style.display = 'none';
+      }
     }
 
     function openPreview() {
