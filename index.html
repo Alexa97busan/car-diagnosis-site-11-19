@@ -138,6 +138,7 @@
     .link-btn[hidden] { display: none; }
 
     /* 사진 업로드 슬롯 */
+    .photo-count { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
     .photo-upload-box {
       border: 1.5px dashed #94a3b8; border-radius: 8px; padding: 8px; text-align: center;
       background: #f8fafc; cursor: pointer; position: relative;
@@ -971,6 +972,7 @@
 
     <section class="card" data-check="sec-photo">
       <h2 class="card-title"><span>6. 현장 핵심 증빙 사진 (번호판+진단기 권장)</span><span class="check" aria-label="입력 완료">✓</span></h2>
+      <p class="photo-count" id="photo-count">사진 0 / 10장 · 최대 10장까지 첨부할 수 있습니다</p>
       <div class="grid-photo">
         <div>
           <div class="photo-upload-box" onclick="document.getElementById('file-1').click()">
@@ -978,7 +980,7 @@
             <div class="placeholder" id="ph-1">+ 사진 1<br>(번호판+진단기)</div>
             <input type="file" id="file-1" accept="image/*" onchange="handlePhoto(1, this)" />
           </div>
-          <input type="text" id="cap-1" class="persist cap-input" value="차량 번호판 및 현장 계측 인증" />
+          <input type="text" id="cap-1" class="persist cap-input" value="차량 번호판 및 현장 계측 인증" placeholder="사진 설명" />
         </div>
         <div>
           <div class="photo-upload-box" onclick="document.getElementById('file-2').click()">
@@ -986,7 +988,7 @@
             <div class="placeholder" id="ph-2">+ 사진 2<br>(엔진/하부)</div>
             <input type="file" id="file-2" accept="image/*" onchange="handlePhoto(2, this)" />
           </div>
-          <input type="text" id="cap-2" class="persist cap-input" value="엔진룸 및 하부 누유 점검" />
+          <input type="text" id="cap-2" class="persist cap-input" value="엔진룸 및 하부 누유 점검" placeholder="사진 설명" />
         </div>
         <div>
           <div class="photo-upload-box" onclick="document.getElementById('file-3').click()">
@@ -994,7 +996,63 @@
             <div class="placeholder" id="ph-3">+ 사진 3<br>(소모품/OBD)</div>
             <input type="file" id="file-3" accept="image/*" onchange="handlePhoto(3, this)" />
           </div>
-          <input type="text" id="cap-3" class="persist cap-input" value="OBD2 스캔 및 타이어 트레드" />
+          <input type="text" id="cap-3" class="persist cap-input" value="OBD2 스캔 및 타이어 트레드" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-4').click()">
+            <img id="prev-4" alt="사진4" />
+            <div class="placeholder" id="ph-4">+ 사진 4<br>(추가 증빙)</div>
+            <input type="file" id="file-4" accept="image/*" onchange="handlePhoto(4, this)" />
+          </div>
+          <input type="text" id="cap-4" class="persist cap-input" value="" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-5').click()">
+            <img id="prev-5" alt="사진5" />
+            <div class="placeholder" id="ph-5">+ 사진 5<br>(추가 증빙)</div>
+            <input type="file" id="file-5" accept="image/*" onchange="handlePhoto(5, this)" />
+          </div>
+          <input type="text" id="cap-5" class="persist cap-input" value="" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-6').click()">
+            <img id="prev-6" alt="사진6" />
+            <div class="placeholder" id="ph-6">+ 사진 6<br>(추가 증빙)</div>
+            <input type="file" id="file-6" accept="image/*" onchange="handlePhoto(6, this)" />
+          </div>
+          <input type="text" id="cap-6" class="persist cap-input" value="" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-7').click()">
+            <img id="prev-7" alt="사진7" />
+            <div class="placeholder" id="ph-7">+ 사진 7<br>(추가 증빙)</div>
+            <input type="file" id="file-7" accept="image/*" onchange="handlePhoto(7, this)" />
+          </div>
+          <input type="text" id="cap-7" class="persist cap-input" value="" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-8').click()">
+            <img id="prev-8" alt="사진8" />
+            <div class="placeholder" id="ph-8">+ 사진 8<br>(추가 증빙)</div>
+            <input type="file" id="file-8" accept="image/*" onchange="handlePhoto(8, this)" />
+          </div>
+          <input type="text" id="cap-8" class="persist cap-input" value="" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-9').click()">
+            <img id="prev-9" alt="사진9" />
+            <div class="placeholder" id="ph-9">+ 사진 9<br>(추가 증빙)</div>
+            <input type="file" id="file-9" accept="image/*" onchange="handlePhoto(9, this)" />
+          </div>
+          <input type="text" id="cap-9" class="persist cap-input" value="" placeholder="사진 설명" />
+        </div>
+        <div>
+          <div class="photo-upload-box" onclick="document.getElementById('file-10').click()">
+            <img id="prev-10" alt="사진10" />
+            <div class="placeholder" id="ph-10">+ 사진 10<br>(추가 증빙)</div>
+            <input type="file" id="file-10" accept="image/*" onchange="handlePhoto(10, this)" />
+          </div>
+          <input type="text" id="cap-10" class="persist cap-input" value="" placeholder="사진 설명" />
         </div>
       </div>
     </section>
@@ -1206,20 +1264,7 @@
           <div class="rp-section" style="margin-bottom:0;">
             <div class="rp-sec-title"><span>6. 현장 핵심 증빙 사진 (번호판 인증 · 하부 · 계측 데이터)</span><span>감가 협상 및 검수 증빙</span></div>
             <div class="rp-sec-body">
-              <div class="rp-photos">
-                <div class="rp-photo-card">
-                  <img id="out-img-1" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' font-size='13' fill='%2364748b' text-anchor='middle' dy='.3em'>사진 1 미첨부</text></svg>" />
-                  <div class="rp-photo-cap" id="out-cap-1">차량 번호판 및 현장 계측 인증</div>
-                </div>
-                <div class="rp-photo-card">
-                  <img id="out-img-2" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' font-size='13' fill='%2364748b' text-anchor='middle' dy='.3em'>사진 2 미첨부</text></svg>" />
-                  <div class="rp-photo-cap" id="out-cap-2">엔진룸 및 하부 누유 점검</div>
-                </div>
-                <div class="rp-photo-card">
-                  <img id="out-img-3" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' font-size='13' fill='%2364748b' text-anchor='middle' dy='.3em'>사진 3 미첨부</text></svg>" />
-                  <div class="rp-photo-cap" id="out-cap-3">OBD2 스캔 및 타이어 트레드</div>
-                </div>
-              </div>
+              <div class="rp-photos" id="out-photos"></div>
             </div>
           </div>
 
@@ -1273,7 +1318,8 @@
   <script>
     const STORAGE_KEY = 'am5h34m_car_report_v4';
     const DEFAULT_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' font-size='13' fill='%2364748b' text-anchor='middle' dy='.3em'>사진 미첨부</text></svg>";
-    let photoData = { 1: '', 2: '', 3: '' };
+    const PHOTO_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let photoData = Object.fromEntries(PHOTO_IDS.map(i => [i, '']));
     let signatureData = '';
     let summaryMode = 'auto'; // 'auto' | 'manual'
 
@@ -1359,7 +1405,7 @@
       'sec-powertrain': () => filled('in-engine') && filled('in-under') && filled('in-battery'),
       'sec-obd': () => filled('in-dtc') && filled('in-live'),
       'sec-options': () => filled('in-opt-hvac') && filled('in-opt-elec') && filled('in-plan-now'),
-      'sec-photo': () => [1, 2, 3].some(i => !!photoData[i]),
+      'sec-photo': () => PHOTO_IDS.some(i => !!photoData[i]),
       'sec-verdict': () => filled('in-summary'),
       'sec-sign': () => !!signatureData && filled('in-inspector') && filled('in-cert-no')
     };
@@ -1583,7 +1629,7 @@
             });
           }
           if (data.photos) {
-            [1, 2, 3].forEach(idx => {
+            PHOTO_IDS.forEach(idx => {
               if (data.photos[idx]) {
                 photoData[idx] = data.photos[idx];
                 applyPhotoUI(idx, data.photos[idx]);
@@ -1599,6 +1645,7 @@
       }
 
       syncAllSegs();
+      updatePhotoCount();
       if (summaryMode === 'auto') document.getElementById('in-summary').value = buildSummary();
       fitAllAutoGrow();
       updateSummaryNote();
@@ -1613,22 +1660,22 @@
       const kept = {};
       keepIds.forEach(id => { kept[id] = document.getElementById(id).value; });
 
-      photoData = { 1: '', 2: '', 3: '' };
+      photoData = Object.fromEntries(PHOTO_IDS.map(i => [i, '']));
       Object.entries(RESET_VALUES).forEach(([id, v]) => {
         const el = document.getElementById(id);
         if (el) el.value = v;
       });
       document.getElementById('in-date').value = getTodayStr();
 
-      [1, 2, 3].forEach(idx => {
+      PHOTO_IDS.forEach(idx => {
         document.getElementById(`file-${idx}`).value = '';
         document.getElementById(`prev-${idx}`).style.display = 'none';
         document.getElementById(`ph-${idx}`).style.display = 'block';
-        document.getElementById(`out-img-${idx}`).src = DEFAULT_PLACEHOLDER;
       });
 
       keepIds.forEach(id => { document.getElementById(id).value = kept[id]; });
       fitAllAutoGrow();
+      updatePhotoCount();
 
       summaryMode = 'auto';
       syncAllSegs();
@@ -1643,10 +1690,39 @@
     function applyPhotoUI(idx, base64) {
       const prev = document.getElementById(`prev-${idx}`);
       const ph = document.getElementById(`ph-${idx}`);
-      const outImg = document.getElementById(`out-img-${idx}`);
       prev.src = base64; prev.style.display = 'block';
       ph.style.display = 'none';
-      outImg.src = base64;
+      updatePhotoCount();
+    }
+
+    function updatePhotoCount() {
+      const n = PHOTO_IDS.filter(i => !!photoData[i]).length;
+      document.getElementById('photo-count').textContent = `사진 ${n} / ${PHOTO_IDS.length}장 · 최대 ${PHOTO_IDS.length}장까지 첨부할 수 있습니다`;
+    }
+
+    // 리포트 사진 영역: 첨부된 사진만 순서대로 표시 (없으면 미첨부 안내 카드 1장)
+    function renderReportPhotos() {
+      const wrap = document.getElementById('out-photos');
+      wrap.textContent = '';
+      const list = PHOTO_IDS.filter(i => !!photoData[i]);
+      if (!list.length) {
+        const card = document.createElement('div');
+        card.className = 'rp-photo-card';
+        card.innerHTML = `<img src="${DEFAULT_PLACEHOLDER}" alt="" /><div class="rp-photo-cap">사진 미첨부</div>`;
+        wrap.appendChild(card);
+        return;
+      }
+      list.forEach(i => {
+        const card = document.createElement('div');
+        card.className = 'rp-photo-card';
+        const img = document.createElement('img');
+        img.src = photoData[i]; img.alt = `사진 ${i}`;
+        const cap = document.createElement('div');
+        cap.className = 'rp-photo-cap';
+        cap.textContent = document.getElementById(`cap-${i}`).value || `현장 증빙 사진 ${i}`;
+        card.appendChild(img); card.appendChild(cap);
+        wrap.appendChild(card);
+      });
     }
 
     function handlePhoto(idx, input) {
@@ -1655,13 +1731,13 @@
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          const maxW = 900;
+          const maxW = 800;
           let w = img.width, h = img.height;
           if (w > maxW) { h = Math.round((h * maxW) / w); w = maxW; }
           const canvas = document.createElement('canvas');
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL('image/jpeg', 0.78);
+          const compressed = canvas.toDataURL('image/jpeg', 0.75);
           photoData[idx] = compressed;
           applyPhotoUI(idx, compressed);
           saveState();
@@ -1767,9 +1843,7 @@
       document.getElementById('out-plan-now').textContent = pNow;
       document.getElementById('out-plan-later').textContent = `1개월(${p1m}) / 6개월(${p6m})`;
 
-      for (let i = 1; i <= 3; i++) {
-        document.getElementById(`out-cap-${i}`).textContent = document.getElementById(`cap-${i}`).value || `현장 증빙 사진 ${i}`;
-      }
+      renderReportPhotos();
 
       document.getElementById('out-next-oil').textContent = document.getElementById('in-next-oil').value || '출고 후 +7,000km';
       document.getElementById('out-inspector').textContent = document.getElementById('in-inspector').value || '정승원';
